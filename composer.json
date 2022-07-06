@@ -5,7 +5,8 @@
     "type": "library",
     "keywords": [
         "ghostwriter",
-        "environment"
+        "environment",
+        "environment-variables"
     ],
     "authors": [
         {
@@ -30,7 +31,8 @@
         }
     ],
     "require": {
-        "php": ">=8.0,<8.2"
+        "php": ">=8.0,<8.2",
+        "ghostwriter/container": "0.6.0"
     },
     "require-dev": {
         "infection/infection": "^0.26.13",
@@ -47,11 +49,7 @@
     "autoload": {
         "psr-4": {
             "Ghostwriter\\Environment\\": "src/"
-        },
-        "files": [
-            "src/constants.php",
-            "src/functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

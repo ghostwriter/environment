@@ -1,12 +1,12 @@
-# wip
+# Environment
 
-[![Compliance](https://github.com/ghostwriter/wip/actions/workflows/compliance.yml/badge.svg)](https://github.com/ghostwriter/wip/actions/workflows/continuous-integration.yml)
-[![Supported PHP Version](https://badgen.net/packagist/php/ghostwriter/wip?color=8892bf)](https://www.php.net/supported-versions)
-[![Type Coverage](https://shepherd.dev/github/ghostwriter/wip/coverage.svg)](https://shepherd.dev/github/ghostwriter/wip)
-[![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/wip)](https://packagist.org/packages/ghostwriter/wip)
-[![Downloads](https://badgen.net/packagist/dt/ghostwriter/wip?color=blue)](https://packagist.org/packages/ghostwriter/wip)
+[![Compliance](https://github.com/ghostwriter/environment/actions/workflows/compliance.yml/badge.svg)](https://github.com/ghostwriter/environment/actions/workflows/continuous-integration.yml)
+[![Supported PHP Version](https://badgen.net/packagist/php/ghostwriter/environment?color=8892bf)](https://www.php.net/supported-versions)
+[![Type Coverage](https://shepherd.dev/github/ghostwriter/environment/coverage.svg)](https://shepherd.dev/github/ghostwriter/environment)
+[![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/environment)](https://packagist.org/packages/ghostwriter/environment)
+[![Downloads](https://badgen.net/packagist/dt/ghostwriter/environment?color=blue)](https://packagist.org/packages/ghostwriter/environment)
 
-work in progress
+Environment Variables for PHP
 
 > **Warning**
 >
@@ -18,13 +18,29 @@ work in progress
 You can install the package via composer:
 
 ``` bash
-composer require ghostwriter/wip
+composer require ghostwriter/environment
 ```
 
 ## Usage
 
 ```php
-// work in progress
+$customEnvVars = ['APP_ENV' => 'dev']
+
+$environment = new \Ghostwriter\Environment\Environment($customEnvVars);
+
+$environment->getVariable('APP_ENV'); // dev
+
+$environment->hasVariable('APP_KEY'); // false
+
+$environment->getVariable('APP_KEY'); // throws NotSetException
+
+$environment->getVariable('APP_KEY', 'fallback-value'); // fallback-value
+
+$environment->setVariable('APP_KEY', 'SECRETE');
+
+$environment->hasVariable('APP_KEY'); // true
+
+$environment->delete('APP_KEY');
 ```
 
 ## Testing
@@ -49,7 +65,7 @@ Maintaining open source software is a thankless, time-consuming job.
 
 Sponsorships are one of the best ways to contribute to the long-term sustainability of an open-source licensed project.
 
-Please consider giving back, to fund the continued development of `ghostwriter/wip`, by sponsoring me here on GitHub.
+Please consider giving back, to fund the continued development of `ghostwriter/environment`, by sponsoring me here on GitHub.
 
 [[Become a GitHub Sponsor](https://github.com/sponsors/ghostwriter)]
 
@@ -60,7 +76,7 @@ Please consider helping your company become a GitHub Sponsor, to support the ope
 ## Credits
 
 - [Nathanael Esayeas](https://github.com/ghostwriter)
-- [All Contributors](https://github.com/ghostwriter/wip/contributors)
+- [All Contributors](https://github.com/ghostwriter/environment/contributors)
 
 ## License
 

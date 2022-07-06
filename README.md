@@ -40,7 +40,7 @@ $environment->setVariable('APP_KEY', 'SECRETE');
 
 $environment->hasVariable('APP_KEY'); // true
 
-$environment->delete('APP_KEY');
+$environment->deleteVariable('APP_KEY');
 ```
 
 ## Testing

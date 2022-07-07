@@ -27,6 +27,9 @@ final class EnvironmentVariableTest extends AbstractTestCase
         $this->environmentVariable = new EnvironmentVariable('NAME', 'V4lu3');
     }
 
+    /**
+     * @return iterable<string,array<int,string>>
+     */
     public function environmentVariablesProvider(): iterable
     {
         yield from [

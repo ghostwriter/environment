@@ -96,7 +96,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         PreferThisOrSelfMethodCallRector::class,
         [
-            TestCase::class => PreferenceSelfThis::PREFER_SELF(),
+            TestCase::class => PreferenceSelfThis::PREFER_SELF,
         ]
     );
     $rectorConfig->ruleWithConfiguration(

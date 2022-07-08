@@ -59,12 +59,15 @@ final class Environment implements EnvironmentInterface
         yield from $this->variables;
     }
 
-    public function getVariable(string $name): string
+    public function getVariable(string $name, ?string $default = null): string
     {
         foreach ($this as $variable) {
             if ($variable->getName() === $name) {
                 return $variable->getValue();
             }
+        }
+        if (is_string($default)) {
+            return $default;
         }
         throw new NotFoundException();
     }

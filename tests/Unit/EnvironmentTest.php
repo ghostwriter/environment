@@ -92,6 +92,7 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasVariable
+     * @covers \Ghostwriter\Environment\Environment::setVariable
      * @covers \Ghostwriter\Environment\Variable::__construct
      * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
      * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue

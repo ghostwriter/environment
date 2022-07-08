@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Ghostwriter\Environment;
 
 use Ghostwriter\Environment\Contract\VariableInterface;
-use Ghostwriter\Environment\Exception\InvalidVariableNameException;
-use Ghostwriter\Environment\Exception\InvalidVariableValueException;
+use Ghostwriter\Environment\Exception\InvalidNameException;
+use Ghostwriter\Environment\Exception\InvalidValueException;
 use function str_contains;
 use function trim;
 
@@ -19,9 +19,9 @@ final class Variable implements VariableInterface
      * @param string $name
      * @param string $value
      *
-     * @throws InvalidVariableNameException  if $name is empty, contains an equals sign `=`,
-     *                                       or the NULL-byte character `\0`
-     * @throws InvalidVariableValueException if $value is empty or contains the NULL-byte character `\0`
+     * @throws InvalidNameException  if $name is empty, contains an equals sign `=`,
+     *                               or the NULL-byte character `\0`
+     * @throws InvalidValueException if $value is empty or contains the NULL-byte character `\0`
      */
     public function __construct(
         private string $name,
@@ -50,7 +50,7 @@ final class Variable implements VariableInterface
             str_contains($name, '=') ||
             str_contains($name, "\0")
         ) {
-            throw new InvalidVariableNameException();
+            throw new InvalidNameException();
         }
     }
 
@@ -62,7 +62,7 @@ final class Variable implements VariableInterface
             $value !== $trimmed ||
             str_contains($value, "\0")
         ) {
-            throw new InvalidVariableValueException();
+            throw new InvalidValueException();
         }
     }
 }

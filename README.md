@@ -26,16 +26,18 @@ $environment->toArray();
 $environment->getIterator();
 
 $environment->hasVariable('APP_ENV'); // false
+$environment->getVariable('APP_ENV', 'dev'); // dev
 $environment->getVariable('APP_ENV'); // throws NotFoundException
-$environment->setVariable('APP_ENV', 'dev');
+$environment->setVariable('APP_ENV', 'production');
 $environment->hasVariable('APP_ENV'); // true
-$environment->getVariable('APP_ENV'); // dev
+$environment->getVariable('APP_ENV'); // production
 
 $environment->setVariable('APP_KEY', 'secrete');
 $environment->hasVariable('APP_KEY'); // true
 $environment->getVariable('APP_KEY'); // secrete
 $environment->unsetVariable('APP_KEY');
 $environment->hasVariable('APP_KEY'); // false
+$environment->getVariable('APP_KEY', 'fallback-value'); // fallback-value
 $environment->getVariable('APP_KEY'); // throws NotFoundException
 ```
 

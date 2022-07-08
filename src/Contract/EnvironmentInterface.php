@@ -34,9 +34,9 @@ interface EnvironmentInterface extends Countable, IteratorAggregate
     /**
      * Get an environment variable.
      *
-     * @throws NotFoundException
+     * @throws NotFoundException if variable $name does not exist or $default is not a string
      */
-    public function getVariable(string $name): string;
+    public function getVariable(string $name, ?string $default = null): string;
 
     /**
      * Check if an environment variable exists.

@@ -6,10 +6,7 @@ namespace Ghostwriter\Environment\Tests\Unit;
 
 use Ghostwriter\Environment\Contract\EnvironmentInterface;
 use Ghostwriter\Environment\Environment;
-use Ghostwriter\Environment\Exception\InvalidNameException;
-use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
-use Ghostwriter\Environment\Variable;
 use IteratorAggregate;
 
 /**
@@ -58,6 +55,22 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::getVariable
+     * @covers \Ghostwriter\Environment\Variable::__construct
+     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
+     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
+     * @covers \Ghostwriter\Environment\Variable::getName
+     * @covers \Ghostwriter\Environment\Variable::getValue
+     */
+    public function testGetNotFoundException(): void
+    {
+        $this->expectException(NotFoundException::class);
+        $this->environment->getVariable('NOT_FOUND');
+    }
+
+    /**
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::getIterator
+     * @covers \Ghostwriter\Environment\Environment::getVariable
      * @covers \Ghostwriter\Environment\Environment::hasVariable
      * @covers \Ghostwriter\Environment\Environment::setVariable
      * @covers \Ghostwriter\Environment\Variable::__construct
@@ -70,6 +83,10 @@ final class EnvironmentTest extends AbstractTestCase
     {
         $this->environment->setVariable('FOO', 'BAR');
         self::assertSame('BAR', $this->environment->getVariable('FOO'));
+
+        self::assertFalse($this->environment->hasVariable('FUBAR'));
+
+        self::assertSame('BAZ', $this->environment->getVariable('FUBAR', 'BAZ'));
     }
 
     /**
@@ -85,38 +102,6 @@ final class EnvironmentTest extends AbstractTestCase
     public function testHasVariable(): void
     {
         self::assertTrue($this->environment->hasVariable('TMPDIR'));
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
-     */
-    public function testGetNotFoundException(): void
-    {
-        $this->expectException(NotFoundException::class);
-        $this->environment->getVariable('NOT_FOUND');
-    }
-    /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
-     */
-    public function testUnsetNotFoundException(): void
-    {
-        $this->expectException(NotFoundException::class);
-        $this->environment->unsetVariable('NOT_FOUND');
     }
 
     /**
@@ -150,6 +135,23 @@ final class EnvironmentTest extends AbstractTestCase
     public function testToArray(): void
     {
         self::assertSame(getenv(), $this->environment->toArray());
+    }
+
+    /**
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::getIterator
+     * @covers \Ghostwriter\Environment\Environment::getVariable
+     * @covers \Ghostwriter\Environment\Environment::unsetVariable
+     * @covers \Ghostwriter\Environment\Variable::__construct
+     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
+     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
+     * @covers \Ghostwriter\Environment\Variable::getName
+     * @covers \Ghostwriter\Environment\Variable::getValue
+     */
+    public function testUnsetNotFoundException(): void
+    {
+        $this->expectException(NotFoundException::class);
+        $this->environment->unsetVariable('NOT_FOUND');
     }
 
     /**

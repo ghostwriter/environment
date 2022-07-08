@@ -47,7 +47,7 @@ final class Variable implements VariableInterface
             str_contains($name, '=') ||
             str_contains($name, "\0")
         ) {
-            throw new InvalidNameException();
+            throw new InvalidNameException($name);
         }
     }
 
@@ -59,7 +59,7 @@ final class Variable implements VariableInterface
             $value !== $trimmed ||
             str_contains($value, "\0")
         ) {
-            throw new InvalidValueException();
+            throw new InvalidValueException($value);
         }
     }
 }

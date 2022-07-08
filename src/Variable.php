@@ -11,14 +11,11 @@ use function str_contains;
 use function trim;
 
 /**
- * @see VariableTest
+ * @see \Ghostwriter\Environment\Tests\Unit\VariableTest
  */
 final class Variable implements VariableInterface
 {
     /**
-     * @param string $name
-     * @param string $value
-     *
      * @throws InvalidNameException  if $name is empty, contains an equals sign `=`,
      *                               or the NULL-byte character `\0`
      * @throws InvalidValueException if $value is empty or contains the NULL-byte character `\0`

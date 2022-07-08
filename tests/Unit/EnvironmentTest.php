@@ -100,7 +100,8 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testHasVariable(): void
     {
-        self::assertTrue($this->environment->hasVariable('TMPDIR'));
+        $this->environment->setVariable('FOO', 'BAR');
+        self::assertTrue($this->environment->hasVariable('FOO'));
     }
 
     /**

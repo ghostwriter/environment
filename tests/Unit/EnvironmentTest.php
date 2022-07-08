@@ -82,11 +82,10 @@ final class EnvironmentTest extends AbstractTestCase
     public function testGetVariable(): void
     {
         $this->environment->setVariable('FOO', 'BAR');
+        self::assertTrue($this->environment->hasVariable('FOO'));
         self::assertSame('BAR', $this->environment->getVariable('FOO'));
-
-        self::assertFalse($this->environment->hasVariable('FUBAR'));
-
-        self::assertSame('BAZ', $this->environment->getVariable('FUBAR', 'BAZ'));
+        self::assertFalse($this->environment->hasVariable('FOOBAR'));
+        self::assertSame('BAZ', $this->environment->getVariable('FOOBAR', 'BAZ'));
     }
 
     /**

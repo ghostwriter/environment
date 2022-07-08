@@ -7,6 +7,6 @@ namespace Ghostwriter\Environment\Exception;
 use Ghostwriter\Environment\Contract\Exception\EnvironmentExceptionInterface;
 use RuntimeException;
 
-abstract class AbstractEnvironmentException extends RuntimeException implements EnvironmentExceptionInterface
+final class InvalidValueException extends RuntimeException implements EnvironmentExceptionInterface
 {
 }

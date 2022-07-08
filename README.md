@@ -8,11 +8,6 @@
 
 Environment Variables for PHP
 
-> **Warning**
->
-> This project is not finished yet, work in progress.
-
-
 ## Installation
 
 You can install the package via composer:
@@ -24,23 +19,26 @@ composer require ghostwriter/environment
 ## Usage
 
 ```php
-$customEnvVars = ['APP_ENV' => 'dev']
+$environment = new \Ghostwriter\Environment\Environment();
 
-$environment = new \Ghostwriter\Environment\Environment($customEnvVars);
+$environment->count();
+$environment->toArray();
+$environment->getIterator();
 
-$environment->getVariable('APP_ENV'); // dev
+$environment->hasVariable('APP_ENV'); // false
+$environment->getVariable('APP_ENV', 'dev'); // dev
+$environment->getVariable('APP_ENV'); // throws NotFoundException
+$environment->setVariable('APP_ENV', 'production');
+$environment->hasVariable('APP_ENV'); // true
+$environment->getVariable('APP_ENV'); // production
 
-$environment->hasVariable('APP_KEY'); // false
-
-$environment->getVariable('APP_KEY'); // throws NotSetException
-
-$environment->getVariable('APP_KEY', 'fallback-value'); // fallback-value
-
-$environment->setVariable('APP_KEY', 'SECRETE');
-
+$environment->setVariable('APP_KEY', 'secrete');
 $environment->hasVariable('APP_KEY'); // true
-
-$environment->deleteVariable('APP_KEY');
+$environment->getVariable('APP_KEY'); // secrete
+$environment->unsetVariable('APP_KEY');
+$environment->hasVariable('APP_KEY'); // false
+$environment->getVariable('APP_KEY', 'fallback-value'); // fallback-value
+$environment->getVariable('APP_KEY'); // throws NotFoundException
 ```
 
 ## Testing

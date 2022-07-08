@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Ghostwriter\Environment\Tests\Unit;
 
 use Ghostwriter\Environment\Contract\VariableInterface;
-use Ghostwriter\Environment\Exception\InvalidVariableNameException;
-use Ghostwriter\Environment\Exception\InvalidVariableValueException;
+use Ghostwriter\Environment\Exception\InvalidNameException;
+use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Variable;
 
 /**
@@ -62,7 +62,7 @@ final class VariableTest extends AbstractTestCase
             str_contains($name, '=') ||
             str_contains($name, "\0")
         ) {
-            $this->expectException(InvalidVariableNameException::class);
+            $this->expectException(InvalidNameException::class);
         }
 
         $trimmedValue = trim($value);
@@ -71,7 +71,7 @@ final class VariableTest extends AbstractTestCase
             $value !== $trimmedValue ||
             str_contains($value, "\0")
         ) {
-            $this->expectException(InvalidVariableValueException::class);
+            $this->expectException(InvalidValueException::class);
         }
 
         self::assertSame($name, (new Variable($name, $value))->getName());

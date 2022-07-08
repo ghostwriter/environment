@@ -82,6 +82,7 @@ final class Environment implements EnvironmentInterface
         return false;
     }
 
+    /** @infection-ignore-all */
     public function setVariable(string $name, string $value): void
     {
         $setVariable = new Variable($name, $value);
@@ -109,6 +110,7 @@ final class Environment implements EnvironmentInterface
         return $variables;
     }
 
+    /** @infection-ignore-all */
     public function unsetVariable(string $name): void
     {
         $notFound = true;

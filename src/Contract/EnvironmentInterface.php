@@ -48,7 +48,7 @@ interface EnvironmentInterface extends Countable, IteratorAggregate
      *
      * @throws SetFailedException
      * @throws InvalidNameException  if $name is empty, contains an equals sign `=` or the NULL-byte character `\0`
-     * @throws InvalidValueException if $value is empty or contains the NULL-byte character `\0`
+     * @throws InvalidValueException if $value starts/ends with whitespace character or contains the NULL-byte character `\0`
      */
     public function setVariable(string $name, string $value): void;
 

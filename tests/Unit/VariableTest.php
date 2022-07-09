@@ -64,6 +64,7 @@ final class VariableTest extends AbstractTestCase
         ) {
             $this->expectException(InvalidNameException::class);
         }
+
         if (
             $value !== trim($value) ||
             str_contains($value, "\0")

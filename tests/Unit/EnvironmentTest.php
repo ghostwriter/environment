@@ -20,11 +20,23 @@ final class EnvironmentTest extends AbstractTestCase
 {
     private EnvironmentInterface $environment;
 
+    /**
+     * @var array<string,string>
+     */
+    private array $environmentVariables = [];
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->environment = new Environment();
+
+        /** @var array<string,string> $this->environmentVariables */
+        $this->environmentVariables = array_filter(
+            array_merge(function_exists('getenv') ? (getenv() ?: []) : [], $_ENV, $_SERVER),
+            static fn ($value, $name): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     /**
@@ -37,7 +49,7 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testCount(): void
     {
-        self::assertCount(count(getenv()), $this->environment);
+        self::assertCount(count($this->environmentVariables), $this->environment);
     }
 
     /**
@@ -135,7 +147,7 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testToArray(): void
     {
-        self::assertSame(getenv(), $this->environment->toArray());
+        self::assertSame($this->environmentVariables, $this->environment->toArray());
     }
 
     /**
@@ -171,13 +183,11 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testUnsetVariable(): void
     {
-        self::assertSame(getenv(), $this->environment->toArray());
+        self::assertFalse($this->environment->hasVariable('UNSET'));
         $this->environment->setVariable('UNSET', 'VALUE');
-        self::assertSame(getenv(), $this->environment->toArray());
-        self::assertSame('VALUE', $this->environment->getVariable('UNSET'));
         self::assertTrue($this->environment->hasVariable('UNSET'));
+        self::assertSame('VALUE', $this->environment->getVariable('UNSET'));
         $this->environment->unsetVariable('UNSET');
         self::assertFalse($this->environment->hasVariable('UNSET'));
-        self::assertSame(getenv(), $this->environment->toArray());
     }
 }

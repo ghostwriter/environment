@@ -14,6 +14,7 @@ use Ghostwriter\Environment\Exception\UnsetFailedException;
 use SplFixedArray;
 use Traversable;
 use function count;
+use function function_exists;
 use function getenv;
 use function iterator_count;
 use function putenv;
@@ -37,7 +38,12 @@ final class Environment implements EnvironmentInterface
      */
     public function __construct()
     {
-        $environment = getenv();
+        /** @var array<string,string> $environment */
+        $environment = array_filter(
+            array_merge(function_exists('getenv') ? (getenv() ?: []) : [], $_ENV, $_SERVER),
+            static fn ($value, $name): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        );
 
         /** @var SplFixedArray<VariableInterface> $this->variables */
         $this->variables = new SplFixedArray(count($environment));
@@ -86,10 +92,11 @@ final class Environment implements EnvironmentInterface
     public function setVariable(string $name, string $value): void
     {
         $setVariable = new Variable($name, $value);
-        $hasBeenSet = putenv(sprintf('%s=%s', $name, $value));
-        if (false === $hasBeenSet) {
+        if (false === putenv(sprintf('%s=%s', $name, $value))) {
             throw new SetFailedException();
         }
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
         foreach ($this as $index => $variable) {
             if ($variable->getName() === $name) {
                 $this->variables->offsetSet($index, $setVariable);
@@ -117,9 +124,11 @@ final class Environment implements EnvironmentInterface
         $index = 0;
         foreach ($this as $variable) {
             if ($variable->getName() === $name) {
-                if (! putenv($name)) {
+                if (false === putenv($name)) {
                     throw new UnsetFailedException();
                 }
+                unset($_ENV[$name]);
+                unset($_SERVER[$name]);
                 $notFound = false;
                 continue;
             }

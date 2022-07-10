@@ -45,6 +45,12 @@ final class EnvironmentTest extends AbstractTestCase
         );
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->environment);
+    }
+
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
@@ -103,9 +109,10 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testGetVariable(): void
     {
-        $this->environment->setEnvironmentVariable('FOO', 'BAR');
-        self::assertTrue($this->environment->hasEnvironmentVariable('FOO'));
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('FOO'));
+        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
+        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
+        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
+        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
         self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
         self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
     }
@@ -124,39 +131,41 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testHasVariable(): void
     {
-        $this->environment->setEnvironmentVariable('FOO', 'BAR');
-        self::assertTrue($this->environment->hasEnvironmentVariable('FOO'));
+        $this->environment->setEnvironmentVariable('HAS_FOO', 'BAR');
+        self::assertTrue($this->environment->hasEnvironmentVariable('HAS_FOO'));
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
-    ┴
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::getIterator
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      */
     public function testSetVariable(): void
     {
-        $this->environment->setEnvironmentVariable('FOO', 'BAR');
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('FOO'));
+        self::assertFalse($this->environment->hasEnvironmentVariable('SET_FOO'));
+        $this->environment->setEnvironmentVariable('SET_FOO', 'SET_FOO_BAR');
+        self::assertTrue($this->environment->hasEnvironmentVariable('SET_FOO'));
+        self::assertSame('SET_FOO_BAR', $this->environment->getEnvironmentVariable('SET_FOO'));
     }
 
     /**
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::toArray
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testToArray(): void
     {
@@ -182,19 +191,19 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::toArray
-     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::getIterator
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::toArray
+     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
      */
     public function testUnsetVariable(): void
     {

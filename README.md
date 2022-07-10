@@ -6,7 +6,7 @@
 [![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/environment)](https://packagist.org/packages/ghostwriter/environment)
 [![Downloads](https://badgen.net/packagist/dt/ghostwriter/environment?color=blue)](https://packagist.org/packages/ghostwriter/environment)
 
-Environment Variables for PHP
+Provides Environment Variables derived from the `getenv()` method, `$_ENV` and `$_SERVER` super-globals
 
 ## Installation
 

@@ -32,7 +32,7 @@ abstract class AbstractTestCase extends TestCase
         if ([] === $environment) {
             $variablesOrder = ini_get('variables_order');
             if (false === $variablesOrder || ! str_contains($variablesOrder, 'E')) {
-                $this->markTestSkipped(
+                self::markTestSkipped(
                     'Cannot get a list of the current environment variables. '
                     . 'Make sure the `variables_order` variable in php.ini '
                     . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'

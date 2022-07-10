@@ -18,6 +18,12 @@ use IteratorAggregate;
  */
 final class EnvironmentTest extends AbstractTestCase
 {
+    /** @var string */
+    private const NAME = 'VARIABLE_NAME';
+
+    /** @var string */
+    private const VALUE = 'VARIABLE_VALUE';
+
     private EnvironmentInterface $environment;
 
     /**
@@ -41,22 +47,24 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
      */
     public function testCount(): void
     {
-        self::assertCount(count($this->environmentVariables), $this->environment);
+        self::assertCount($this->environment->count(), $this->environment);
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
      */
     public function testGetIterator(): void
     {
@@ -65,85 +73,90 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testGetNotFoundException(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->environment->getVariable('NOT_FOUND');
+        $this->environment->getEnvironmentVariable('NOT_FOUND');
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Environment::hasVariable
-     * @covers \Ghostwriter\Environment\Environment::setVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testGetVariable(): void
     {
-        $this->environment->setVariable('FOO', 'BAR');
-        self::assertTrue($this->environment->hasVariable('FOO'));
-        self::assertSame('BAR', $this->environment->getVariable('FOO'));
-        self::assertFalse($this->environment->hasVariable('FOOBAR'));
-        self::assertSame('BAZ', $this->environment->getVariable('FOOBAR', 'BAZ'));
+        $this->environment->setEnvironmentVariable('FOO', 'BAR');
+        self::assertTrue($this->environment->hasEnvironmentVariable('FOO'));
+        self::assertSame('BAR', $this->environment->getEnvironmentVariable('FOO'));
+        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
+        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::hasVariable
-     * @covers \Ghostwriter\Environment\Environment::setVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
     ┴
      */
     public function testHasVariable(): void
     {
-        $this->environment->setVariable('FOO', 'BAR');
-        self::assertTrue($this->environment->hasVariable('FOO'));
+        $this->environment->setEnvironmentVariable('FOO', 'BAR');
+        self::assertTrue($this->environment->hasEnvironmentVariable('FOO'));
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Environment::setVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
     ┴
      */
     public function testSetVariable(): void
     {
-        $this->environment->setVariable('FOO', 'BAR');
-        self::assertSame('BAR', $this->environment->getVariable('FOO'));
+        $this->environment->setEnvironmentVariable('FOO', 'BAR');
+        self::assertSame('BAR', $this->environment->getEnvironmentVariable('FOO'));
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::toArray
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testToArray(): void
     {
@@ -152,42 +165,44 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testUnsetNotFoundException(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->environment->unsetVariable('NOT_FOUND');
+        $this->environment->unsetEnvironmentVariable('NOT_FOUND');
     }
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getVariable
-     * @covers \Ghostwriter\Environment\Environment::hasVariable
-     * @covers \Ghostwriter\Environment\Environment::setVariable
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      * @covers \Ghostwriter\Environment\Environment::toArray
-     * @covers \Ghostwriter\Environment\Environment::unsetVariable
-     * @covers \Ghostwriter\Environment\Variable::__construct
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableName
-     * @covers \Ghostwriter\Environment\Variable::assertValidVariableValue
-     * @covers \Ghostwriter\Environment\Variable::getName
-     * @covers \Ghostwriter\Environment\Variable::getValue
+     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testUnsetVariable(): void
     {
-        self::assertFalse($this->environment->hasVariable('UNSET'));
-        $this->environment->setVariable('UNSET', 'VALUE');
-        self::assertTrue($this->environment->hasVariable('UNSET'));
-        self::assertSame('VALUE', $this->environment->getVariable('UNSET'));
-        $this->environment->unsetVariable('UNSET');
-        self::assertFalse($this->environment->hasVariable('UNSET'));
+        self::assertFalse($this->environment->hasEnvironmentVariable(self::NAME));
+        $this->environment->setEnvironmentVariable(self::NAME, self::VALUE);
+        self::assertTrue($this->environment->hasEnvironmentVariable(self::NAME));
+        self::assertSame(self::VALUE, $this->environment->getEnvironmentVariable(self::NAME));
+        $this->environment->unsetEnvironmentVariable(self::NAME);
+        self::assertFalse($this->environment->hasEnvironmentVariable(self::NAME));
     }
 }

@@ -24,8 +24,8 @@ abstract class AbstractVariable implements VariableInterface
         private string $name,
         private string $value
     ) {
-        $this->assertVariableName($this->name);
-        $this->assertVariableValue($this->value);
+        $this->assertValidName($this->name);
+        $this->assertValidValue($this->value);
     }
 
     public function getName(): string
@@ -38,7 +38,7 @@ abstract class AbstractVariable implements VariableInterface
         return $this->value;
     }
 
-    private function assertVariableName(string $name): void
+    private function assertValidName(string $name): void
     {
         $trimmed = trim($name);
         if (
@@ -51,7 +51,7 @@ abstract class AbstractVariable implements VariableInterface
         }
     }
 
-    private function assertVariableValue(string $value): void
+    private function assertValidValue(string $value): void
     {
         if ($value !== trim($value) || str_contains($value, "\0")) {
             throw new InvalidValueException($value);

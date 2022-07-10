@@ -1,6 +1,6 @@
 {
     "name": "ghostwriter/environment",
-    "description": "Environment Variables for PHP",
+    "description": "Provides Environment Variables derived from the `getenv()` method, `$_ENV` and `$_SERVER` super-globals",
     "license": "BSD-3-Clause",
     "type": "library",
     "keywords": [

@@ -28,6 +28,12 @@ abstract class AbstractVariableTest extends AbstractTestCase
         $this->variable = $this->createVariable(self::NAME, self::VALUE);
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        unset($this->variable);
+    }
+
     /**
      * @return iterable<string,array<int,string>>
      */

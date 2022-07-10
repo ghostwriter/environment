@@ -7,8 +7,6 @@ namespace Ghostwriter\Environment\Contract;
 use Ghostwriter\Environment\Exception\InvalidNameException;
 use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
-use Ghostwriter\Environment\Exception\SetFailedException;
-use Ghostwriter\Environment\Exception\UnsetFailedException;
 
 interface ServerVariablesInterface
 {
@@ -27,7 +25,6 @@ interface ServerVariablesInterface
     /**
      * Set a server variable.
      *
-     * @throws SetFailedException
      * @throws InvalidNameException  if $name is empty, contains an equals sign `=` or the NULL-byte character `\0`
      * @throws InvalidValueException if $value starts/ends with whitespace character or contains the NULL-byte character `\0`
      */
@@ -36,7 +33,7 @@ interface ServerVariablesInterface
     /**
      * Unset a server variable.
      *
-     * @throws UnsetFailedException
+     * @throws NotFoundException if variable $name does not exist
      */
     public function unsetServerVariable(string $name): void;
 }

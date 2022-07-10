@@ -35,7 +35,8 @@ final class Environment implements EnvironmentInterface
      */
     public function __construct()
     {
-        if ([] === $_ENV) {
+        $environment = function_exists('getenv') ? (getenv() ?: $_ENV) : $_ENV;
+        if ([] === $environment) {
             $variablesOrder = ini_get('variables_order');
             if (false === $variablesOrder || ! str_contains($variablesOrder, 'E')) {
                 throw new RuntimeException(

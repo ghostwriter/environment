@@ -55,11 +55,13 @@ final class Environment implements EnvironmentInterface
 
         $index = 0;
         foreach ($environmentVariables as $name => $value) {
-            $this->variables->offsetSet($index++, new EnvironmentVariable($name, $value));
+            $this->variables->offsetSet($index, new EnvironmentVariable($name, $value));
+            ++$index;
         }
 
         foreach ($serverVariables as $name => $value) {
-            $this->variables->offsetSet($index++, new ServerVariable($name, $value));
+            $this->variables->offsetSet($index, new ServerVariable($name, $value));
+            ++$index;
         }
     }
 

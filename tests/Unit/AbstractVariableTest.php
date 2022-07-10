@@ -54,8 +54,8 @@ abstract class AbstractVariableTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @dataProvider environmentVariablesProvider
@@ -85,8 +85,8 @@ abstract class AbstractVariableTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      */
     public function testGetName(): void
@@ -96,8 +96,8 @@ abstract class AbstractVariableTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      */
     public function testGetValue(): void

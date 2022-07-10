@@ -15,6 +15,8 @@ use IteratorAggregate;
  * @internal
  *
  * @small
+ *
+ * @psalm-suppress MissingConstructor
  */
 final class EnvironmentTest extends AbstractTestCase
 {
@@ -26,23 +28,11 @@ final class EnvironmentTest extends AbstractTestCase
 
     private EnvironmentInterface $environment;
 
-    /**
-     * @var array<string,string>
-     */
-    private array $environmentVariables = [];
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->environment = new Environment();
-
-        /** @var array<string,string> $this->environmentVariables */
-        $this->environmentVariables = array_filter(
-            array_merge(function_exists('getenv') ? (getenv() ?: []) : [], $_ENV, $_SERVER),
-            static fn ($value, $name): bool => is_string($name) && is_string($value),
-            ARRAY_FILTER_USE_BOTH
-        );
     }
 
     protected function tearDown(): void
@@ -62,7 +52,19 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testCount(): void
     {
-        self::assertCount($this->environment->count(), $this->environment);
+        self::assertCount(count(
+            array_filter(
+                $this->backupEnvironmentVariables,
+                static fn ($value, $name): bool => is_string($name) && is_string($value),
+                ARRAY_FILTER_USE_BOTH
+            )
+        )+count(
+            array_filter(
+                $this->backupServerVariables,
+                static fn ($value, $name): bool => is_string($name) && is_string($value),
+                ARRAY_FILTER_USE_BOTH
+            )
+        ), $this->environment);
     }
 
     /**
@@ -169,7 +171,11 @@ final class EnvironmentTest extends AbstractTestCase
      */
     public function testToArray(): void
     {
-        self::assertSame($this->environmentVariables, $this->environment->toArray());
+        self::assertSame(array_filter(
+            array_merge($this->backupEnvironmentVariables, $this->backupServerVariables),
+            static fn ($value, $name): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        ), $this->environment->toArray());
     }
 
     /**

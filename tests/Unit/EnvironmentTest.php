@@ -42,29 +42,17 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertVariableValue
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::count
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\Environment::getIterator
      */
     public function testCount(): void
     {
-        self::assertCount(count(
-            array_filter(
-                $this->backupEnvironmentVariables,
-                static fn ($value, $name): bool => is_string($name) && is_string($value),
-                ARRAY_FILTER_USE_BOTH
-            )
-        )+count(
-            array_filter(
-                $this->backupServerVariables,
-                static fn ($value, $name): bool => is_string($name) && is_string($value),
-                ARRAY_FILTER_USE_BOTH
-            )
-        ), $this->environment);
+        self::assertCount($this->environment->count(), $this->environment);
     }
 
     /**

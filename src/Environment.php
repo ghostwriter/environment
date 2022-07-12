@@ -8,20 +8,10 @@ use Ghostwriter\Environment\Contract\EnvironmentInterface;
 use Ghostwriter\Environment\Contract\EnvironmentVariableInterface;
 use Ghostwriter\Environment\Contract\ServerVariableInterface;
 use Ghostwriter\Environment\Contract\VariableInterface;
-use Ghostwriter\Environment\Exception\InvalidNameException;
-use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
 use RuntimeException;
 use SplFixedArray;
 use Traversable;
-use function array_filter;
-use function count;
-use function function_exists;
-use function getenv;
-use function ini_get;
-use function is_string;
-use function iterator_count;
-use function str_contains;
 
 /**
  * Maps environment variables.
@@ -35,11 +25,7 @@ final class Environment implements EnvironmentInterface
      */
     private SplFixedArray $variables;
 
-    /**
-     * @throws InvalidNameException
-     * @throws InvalidValueException
-     */
-    public function __construct()
+    final public function __construct()
     {
         /** @var array<string,string> $_ENV */
         if ([] === $_ENV) {
@@ -57,38 +43,34 @@ final class Environment implements EnvironmentInterface
             }
         }
 
+        $index = 0;
+
         $environmentVariables = $this->filterStringNameAndValue($_ENV);
-        $serverVariables = $this->filterStringNameAndValue($_SERVER);
 
         /** @var SplFixedArray<VariableInterface> $this->variables */
-        $this->variables = new SplFixedArray(count($environmentVariables) + count($serverVariables));
+        $this->variables = new SplFixedArray(count($environmentVariables));
 
-        $index = 0;
         foreach ($environmentVariables as $name => $value) {
-            $this->variables->offsetSet($index, new EnvironmentVariable($name, $value));
-            ++$index;
+            $this->variables->offsetSet($index++, new EnvironmentVariable($name, $value));
         }
 
+        $serverVariables = $this->filterStringNameAndValue($_SERVER);
+
+        $this->variables->setSize($index + count($serverVariables));
+
         foreach ($serverVariables as $name => $value) {
-            $this->variables->offsetSet($index, new ServerVariable($name, $value));
-            ++$index;
+            $this->variables->offsetSet($index++, new ServerVariable($name, $value));
         }
     }
 
     public function count(): int
     {
-        return iterator_count($this);
+        return iterator_count($this->filterType(VariableInterface::class));
     }
 
     public function getEnvironmentVariable(string $name, ?string $default = null): string
     {
-        foreach ($this as $variable) {
-            if (! $variable instanceof EnvironmentVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
+        foreach ($this->findVariable($name, EnvironmentVariableInterface::class) as $variable) {
             return $variable->getValue();
         }
 
@@ -97,22 +79,32 @@ final class Environment implements EnvironmentInterface
         }
 
         return $default;
+    }
+
+    public function getEnvironmentVariables(): array
+    {
+        $variables = [];
+        foreach ($this->filterType(EnvironmentVariableInterface::class) as $variable) {
+            $variables[$variable->getName()] = $variable->getValue();
+        }
+        return $variables;
     }
 
     public function getIterator(): Traversable
     {
         yield from $this->variables;
+//        /** @var VariableInterface $variable */
+//        foreach (new CallbackFilterIterator(
+//                     $this->variables->getIterator(),
+//            static fn ($current) => $current instanceof VariableInterface
+//        ) as $variable) {
+//            yield $variable;
+//        }
     }
 
     public function getServerVariable(string $name, ?string $default = null): string
     {
-        foreach ($this as $variable) {
-            if (! $variable instanceof ServerVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
+        foreach ($this->findVariable($name, ServerVariableInterface::class) as $variable) {
             return $variable->getValue();
         }
 
@@ -123,42 +115,48 @@ final class Environment implements EnvironmentInterface
         return $default;
     }
 
+    public function getServerVariables(): array
+    {
+        $variables = [];
+        foreach ($this->filterType(ServerVariableInterface::class) as $variable) {
+            $variables[$variable->getName()] = $variable->getValue();
+        }
+        return $variables;
+    }
+
     public function hasEnvironmentVariable(string $name): bool
     {
-        foreach ($this as $variable) {
-            if (! $variable instanceof EnvironmentVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
-            return true;
-        }
-        return false;
+        return iterator_count($this->findVariable($name, EnvironmentVariableInterface::class)) > 0;
     }
 
     public function hasServerVariable(string $name): bool
     {
-        foreach ($this as $variable) {
-            if (! $variable instanceof ServerVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
-            return true;
-        }
-        return false;
+        return iterator_count($this->findVariable($name, ServerVariableInterface::class)) > 0;
     }
 
     public function setEnvironmentVariable(string $name, string $value): void
     {
         $environmentVariable = new EnvironmentVariable($name, $value);
-        foreach ($this as $index => $variable) {
+        if (! iterator_count($this->removeVariable($name, EnvironmentVariableInterface::class))) {
+            $_ENV[$name] = $value;
+            $index = $this->variables->count();
+            $this->variables->setSize($index + 1);
+            $this->variables->offsetSet($index, $environmentVariable);
+            return;
+        }
+        foreach ($this->variables as $index => $variable) {
             if (! $variable instanceof EnvironmentVariableInterface) {
                 continue;
             }
             if ($variable->getName() !== $name) {
+                continue;
+            }
+            $_ENV[$name] = $value;
+            $this->variables->offsetSet($index, $environmentVariable);
+            return;
+        }
+        foreach ($this->variables as $index => $variable) {
+            if ($variable instanceof VariableInterface) {
                 continue;
             }
             $_ENV[$name] = $value;
@@ -174,27 +172,27 @@ final class Environment implements EnvironmentInterface
     public function setServerVariable(string $name, string $value): void
     {
         $serverVariable = new ServerVariable($name, $value);
-        foreach ($this as $index => $variable) {
-            if (! $variable instanceof ServerVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
+        if (! iterator_count($this->removeVariable($name, ServerVariableInterface::class))) {
+            $_SERVER[$name] = $value;
+            $index = $this->variables->count();
+            $this->variables->setSize($index + 1);
+            $this->variables->offsetSet($index, $serverVariable);
+            return;
+        }
+        foreach ($this->variables as $index => $variable) {
+            if ($variable instanceof VariableInterface) {
                 continue;
             }
             $_SERVER[$name] = $value;
             $this->variables->offsetSet($index, $serverVariable);
             return;
         }
-        $_SERVER[$name] = $value;
-        $index = $this->variables->count();
-        $this->variables->setSize($index + 1);
-        $this->variables->offsetSet($index, $serverVariable);
     }
 
     public function toArray(): array
     {
         $variables = [];
-        foreach ($this as $variable) {
+        foreach ($this->filterType(VariableInterface::class) as $variable) {
             $variables[$variable->getName()] = $variable->getValue();
         }
         return $variables;
@@ -202,54 +200,18 @@ final class Environment implements EnvironmentInterface
 
     public function unsetEnvironmentVariable(string $name): void
     {
-        $unset = false;
-        $index = 0;
-        foreach ($this as $variable) {
-            if ($unset) {
-                $this->variables->offsetSet($index++, $variable);
-                continue;
-            }
-            if (! $variable instanceof EnvironmentVariableInterface) {
-                ++$index;
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                ++$index;
-                continue;
-            }
-            $unset = true;
-            unset($_ENV[$name]);
-        }
-        if (! $unset) {
+        if (! iterator_count($this->removeVariable($name, EnvironmentVariableInterface::class))) {
             throw new NotFoundException();
         }
-        $this->variables->setSize($index);
+        unset($_ENV[$name]);
     }
 
     public function unsetServerVariable(string $name): void
     {
-        $unset = false;
-        $index = 0;
-        foreach ($this as $variable) {
-            if ($unset) {
-                $this->variables->offsetSet($index++, $variable);
-                continue;
-            }
-            if (! $variable instanceof ServerVariableInterface) {
-                ++$index;
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                ++$index;
-                continue;
-            }
-            $unset = true;
-            unset($_SERVER[$name]);
-        }
-        if (! $unset) {
+        if (! iterator_count($this->removeVariable($name, ServerVariableInterface::class))) {
             throw new NotFoundException();
         }
-        $this->variables->setSize($index);
+        unset($_SERVER[$name]);
     }
 
     /**
@@ -265,5 +227,57 @@ final class Environment implements EnvironmentInterface
             static fn ($value, $name): bool => is_string($name) && is_string($value),
             ARRAY_FILTER_USE_BOTH
         );
+    }
+
+    /**
+     * @param class-string<VariableInterface> $type
+     *
+     * @return Traversable<int,VariableInterface>
+     */
+    private function filterType(string $type): iterable
+    {
+        foreach ($this->variables as $variable) {
+            if (! is_a($variable, $type)) {
+                continue;
+            }
+            yield $variable;
+        }
+    }
+
+    /**
+     * @param class-string<VariableInterface> $type
+     *
+     * @return Traversable<int,VariableInterface>
+     */
+    private function findVariable(string $name, string $type): iterable
+    {
+        foreach ($this->variables as $variable) {
+            if (! is_a($variable, $type)) {
+                continue;
+            }
+            if ($variable->getName() !== $name) {
+                continue;
+            }
+            yield $variable;
+        }
+    }
+
+    /**
+     * @param class-string<VariableInterface> $type
+     *
+     * @return Traversable<int,VariableInterface>
+     */
+    private function removeVariable(string $name, string $type): iterable
+    {
+        foreach ($this->variables as $index => $variable) {
+            if (! is_a($variable, $type)) {
+                continue;
+            }
+            if ($variable->getName() !== $name) {
+                continue;
+            }
+            $this->variables->offsetUnset($index);
+            yield $variable;
+        }
     }
 }

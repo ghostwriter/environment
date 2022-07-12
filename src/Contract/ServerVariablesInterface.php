@@ -18,6 +18,13 @@ interface ServerVariablesInterface
     public function getServerVariable(string $name, ?string $default = null): string;
 
     /**
+     * Get an array copy of all server variables.
+     *
+     * @return array<string,string>
+     */
+    public function getServerVariables(): array;
+
+    /**
      * Check if a server variable exists.
      */
     public function hasServerVariable(string $name): bool;

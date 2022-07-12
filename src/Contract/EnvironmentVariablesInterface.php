@@ -18,6 +18,13 @@ interface EnvironmentVariablesInterface
     public function getEnvironmentVariable(string $name, ?string $default = null): string;
 
     /**
+     * Get an array copy of all environment variables.
+     *
+     * @return array<string,string>
+     */
+    public function getEnvironmentVariables(): array;
+
+    /**
      * Check if an environment variable exists.
      */
     public function hasEnvironmentVariable(string $name): bool;

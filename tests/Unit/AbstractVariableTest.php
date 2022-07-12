@@ -99,6 +99,10 @@ abstract class AbstractVariableTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
+     * @covers \Ghostwriter\Environment\Environment::filterType
+     * @covers \Ghostwriter\Environment\Environment::findVariable
+     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testGetValue(): void
     {

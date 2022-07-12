@@ -15,19 +15,19 @@ use Traversable;
 interface EnvironmentInterface extends Countable, EnvironmentVariablesInterface, IteratorAggregate, ServerVariablesInterface
 {
     /**
-     * Get the number of environment variables.
+     * Get the number of variables.
      */
     public function count(): int;
 
     /**
-     * Get all environment variables.
+     * Get all variables.
      *
      * @return Traversable<int,VariableInterface>
      */
     public function getIterator(): Traversable;
 
     /**
-     * Get an array copy of all the environment variables.
+     * Get an array copy of all variables.
      *
      * @return array<string,string>
      */

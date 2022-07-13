@@ -4,8 +4,75 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4766c82e504ef34a13da294330303d48",
-    "packages": [],
+    "content-hash": "d3468eea83217f39cabc8d5079d2ffe5",
+    "packages": [
+        {
+            "name": "ghostwriter/collection",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ghostwriter/collection.git",
+                "reference": "b7b002c1f8ded61905c8d33967f6bbf49354796b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ghostwriter/collection/zipball/b7b002c1f8ded61905c8d33967f6bbf49354796b",
+                "reference": "b7b002c1f8ded61905c8d33967f6bbf49354796b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0,<8.2"
+            },
+            "require-dev": {
+                "phpbench/phpbench": "^1.2.5",
+                "phpunit/phpunit": "^9.5.21",
+                "psalm/plugin-phpunit": "^0.17.0",
+                "rector/rector": "^0.13.6",
+                "roave/infection-static-analysis-plugin": "^1.20.0",
+                "roave/security-advisories": "dev-latest",
+                "symplify/easy-coding-standard": "^11.0.5",
+                "vimeo/psalm": "^4.23.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ghostwriter\\Collection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nathanael Esayeas",
+                    "email": "nathanael.esayeas@protonmail.com",
+                    "homepage": "https://github.com/ghostwriter",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Provides a Collection implementation for PHP",
+            "homepage": "https://github.com/ghostwriter/collection",
+            "keywords": [
+                "collection",
+                "ghostwriter"
+            ],
+            "support": {
+                "docs": "https://github.com/ghostwriter/collection",
+                "forum": "https://github.com/ghostwriter/collection/discussions",
+                "issues": "https://github.com/ghostwriter/collection/issues",
+                "rss": "https://github.com/ghostwriter/collection/releases.atom",
+                "source": "https://github.com/ghostwriter/collection"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/ghostwriter",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-06-23T02:27:39+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "amphp/amp",
@@ -2020,16 +2087,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5"
+                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b7648d4ee9321665acaf112e49da9fd93df8fbd5",
-                "reference": "b7648d4ee9321665acaf112e49da9fd93df8fbd5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8dbba631fa32f4b289404469c2afd6122fd61d67",
+                "reference": "8dbba631fa32f4b289404469c2afd6122fd61d67",
                 "shasum": ""
             },
             "require": {
@@ -2055,7 +2122,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.8.0"
+                "source": "https://github.com/phpstan/phpstan/tree/1.8.1"
             },
             "funding": [
                 {
@@ -2075,7 +2142,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-29T08:53:31+00:00"
+            "time": "2022-07-12T16:08:06+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

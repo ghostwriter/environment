@@ -29,26 +29,28 @@ final class Environment implements EnvironmentInterface
 
     final public function __construct()
     {
-        /** @var array<string,string> $_ENV */
-        if ([] === $_ENV) {
-            $_ENV = function_exists('getenv') ? (getenv() ?: []) : [];
-        }
-
-        if ([] === $_ENV) {
-            $variablesOrder = ini_get('variables_order');
-            if (false === $variablesOrder || ! str_contains($variablesOrder, 'E')) {
-                throw new RuntimeException(
-                    'Cannot get a list of the current environment variables. '
-                    . 'Make sure the `variables_order` variable in php.ini '
-                    . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'
-                );
-            }
-        }
-
         /** @var Collection<VariableInterface> $this->variables */
         $this->variables = Collection::fromGenerator(
             static function (): Generator {
-                /** @var mixed|string $value */
+                /** @var array<string,string> $_ENV */
+                if ([] === $_ENV) {
+                    $_ENV = function_exists('getenv') ? (getenv() ?: []) : [];
+                }
+
+                if ([] === $_ENV) {
+                    $variablesOrder = ini_get('variables_order');
+                    if (false === $variablesOrder || ! str_contains($variablesOrder, 'E')) {
+                        throw new RuntimeException(
+                            'Cannot get a list of the current environment variables. '
+                            . 'Make sure the `variables_order` variable in php.ini '
+                            . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'
+                        );
+                    }
+                }
+                /**
+                 * @var mixed|string $name
+                 * @var mixed|string $value
+                 */
                 foreach ($_ENV as $name => $value) {
                     if (! is_string($name)) {
                         continue;
@@ -58,7 +60,10 @@ final class Environment implements EnvironmentInterface
                     }
                     yield new EnvironmentVariable($name, $value);
                 }
-                /** @var mixed|string $value */
+                /**
+                 * @var mixed|string $name
+                 * @var mixed|string $value
+                 */
                 foreach ($_SERVER as $name => $value) {
                     if (! is_string($name)) {
                         continue;
@@ -105,7 +110,7 @@ final class Environment implements EnvironmentInterface
                 VariableInterface $variable
             ): array =>
             $variable instanceof EnvironmentVariableInterface ?
-                ($variables + $variable->asArray()) :
+                ($variables + $variable->toArray()) :
                 $variables,
             []
         );
@@ -145,7 +150,7 @@ final class Environment implements EnvironmentInterface
                 VariableInterface $variable
             ): array =>
             $variable instanceof ServerVariableInterface ?
-                ($variables + $variable->asArray()) :
+                ($variables + $variable->toArray()) :
                 $variables,
             []
         );
@@ -201,7 +206,7 @@ final class Environment implements EnvironmentInterface
             static fn (
                 array $variables,
                 VariableInterface $variable
-            ): array => ($variables + $variable->asArray()),
+            ): array => ($variables + $variable->toArray()),
             []
         );
 

@@ -41,10 +41,20 @@ final class EnvironmentTest extends AbstractTestCase
         unset($this->environment);
     }
 
-    /** @coversNothing */
+    /**
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
+     * @covers \Ghostwriter\Environment\Environment::getServerVariables
+     */
     public function testConstruct(): void
     {
-        self::assertTrue(true);
+        self::assertSame($this->backupEnvironmentVariables, $this->environment->getEnvironmentVariables());
+        self::assertSame($this->backupServerVariables, $this->environment->getServerVariables());
     }
 
     /**
@@ -54,10 +64,6 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testCount(): void
     {
@@ -65,8 +71,6 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
@@ -74,13 +78,10 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testGetEnvironmentVariable(): void
     {
@@ -96,23 +97,39 @@ final class EnvironmentTest extends AbstractTestCase
         self::assertTrue(true);
     }
 
-    /** @coversNothing */
+    /**
+     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
+     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::count
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+     */
     public function testGetEnvironmentVariables(): void
     {
+        $count = $this->environment->count();
+        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
+        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
+        self::assertCount($count+1, $this->environment);
+        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
+        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
+        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
+        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
         self::assertTrue(true);
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::count
+     * @covers \Ghostwriter\Environment\Environment::getIterator
      */
     public function testGetIterator(): void
     {
@@ -121,18 +138,12 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
      */
     public function testGetNotFoundException(): void
     {
@@ -141,26 +152,20 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
-     * @covers \Ghostwriter\Environment\Environment::getServerVariables
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::count
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
+     * @covers \Ghostwriter\Environment\Environment::getServerVariable
+     * @covers \Ghostwriter\Environment\Environment::getServerVariables
+     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
+     * @covers \Ghostwriter\Environment\Environment::setServerVariable
+     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
      */
     public function testGetServerVariable(): void
     {
@@ -199,13 +204,9 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testGetServerVariables(): void
     {
@@ -221,21 +222,17 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::count
+     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      */
     public function testGetVariable(): void
     {
@@ -250,18 +247,15 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::__construct
+     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
+     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
+    ┴
      */
     public function testHasEnvironmentVariable(): void
     {
@@ -272,18 +266,13 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
+     * @covers \Ghostwriter\Environment\Environment::setServerVariable
      */
     public function testHasServerVariable(): void
     {
@@ -301,16 +290,10 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::toArray
      * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testServerVariable(): void
     {
@@ -335,13 +318,9 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testSetEnvironmentVariable(): void
     {
@@ -362,14 +341,9 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testSetServerVariable(): void
     {
@@ -388,12 +362,7 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::toArray
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testToArray(): void
     {
@@ -413,16 +382,10 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::toArray
      * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testUnsetEnvironmentVariable(): void
     {
@@ -443,18 +406,10 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
      * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testUnsetEnvironmentVariableNotFoundException(): void
     {
@@ -474,17 +429,11 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
+     * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::toArray
      * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testUnsetServerVariable(): void
     {
@@ -505,18 +454,10 @@ final class EnvironmentTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::filterStringNameAndValue
-     * @covers \Ghostwriter\Environment\Environment::findVariable
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     * @covers \Ghostwriter\Environment\Environment::filterType
-     * @covers \Ghostwriter\Environment\Environment::removeVariable
      */
     public function testUnsetServerVariableNotFoundException(): void
     {

@@ -104,16 +104,21 @@ final class Environment implements EnvironmentInterface
     public function getEnvironmentVariables(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables->reduce(
-            static fn (
-                array $variables,
-                VariableInterface $variable
-            ): array =>
-            $variable instanceof EnvironmentVariableInterface ?
-                ($variables + $variable->toArray()) :
-                $variables,
-            []
-        );
+        $variables = $this->variables
+            ->filter(
+                static fn (
+                    VariableInterface $variable
+                ): bool => $variable instanceof EnvironmentVariableInterface
+            )
+            ->reduce(
+                static fn (
+                    mixed $variables,
+                    VariableInterface $variable
+                ): array => is_array($variables) ?
+                    ($variables + $variable->toArray()) :
+                    $variable->toArray()
+            );
+
         return $variables;
     }
 
@@ -144,16 +149,20 @@ final class Environment implements EnvironmentInterface
     public function getServerVariables(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables->reduce(
-            static fn (
-                array $variables,
-                VariableInterface $variable
-            ): array =>
-            $variable instanceof ServerVariableInterface ?
-                ($variables + $variable->toArray()) :
-                $variables,
-            []
-        );
+        $variables = $this->variables
+            ->filter(
+                static fn (
+                    VariableInterface $variable
+                ): bool => $variable instanceof ServerVariableInterface
+            )
+            ->reduce(
+                static fn (
+                    mixed $variables,
+                    VariableInterface $variable
+                ): array => is_array($variables) ?
+                    $variables + $variable->toArray() :
+                    $variable->toArray()
+            );
         return $variables;
     }
 
@@ -202,13 +211,13 @@ final class Environment implements EnvironmentInterface
     public function toArray(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables->reduce(
-            static fn (
-                array $variables,
-                VariableInterface $variable
-            ): array => ($variables + $variable->toArray()),
-            []
-        );
+        $variables = $this->variables
+            ->reduce(
+                static fn (
+                    mixed $variables,
+                    VariableInterface $variable
+                ): array => ! is_array($variables) ? $variable->toArray() : $variables + $variable->toArray()
+            );
 
         return $variables;
     }

@@ -28,7 +28,7 @@ abstract class AbstractVariable implements VariableInterface
         $this->assertValidValue($this->value);
     }
 
-    public function asArray(): array
+    public function toArray(): array
     {
         return [
             $this->name => $this->value,

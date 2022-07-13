@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Ghostwriter\Environment;
 
+use Closure;
+use Generator;
+use Ghostwriter\Collection\Collection;
 use Ghostwriter\Environment\Contract\EnvironmentInterface;
 use Ghostwriter\Environment\Contract\EnvironmentVariableInterface;
 use Ghostwriter\Environment\Contract\ServerVariableInterface;
 use Ghostwriter\Environment\Contract\VariableInterface;
 use Ghostwriter\Environment\Exception\NotFoundException;
 use RuntimeException;
-use SplFixedArray;
 use Traversable;
 
 /**
@@ -21,9 +23,9 @@ use Traversable;
 final class Environment implements EnvironmentInterface
 {
     /**
-     * @var SplFixedArray<VariableInterface>
+     * @var Collection<VariableInterface>
      */
-    private SplFixedArray $variables;
+    private Collection $variables;
 
     final public function __construct()
     {
@@ -43,241 +45,202 @@ final class Environment implements EnvironmentInterface
             }
         }
 
-        $index = 0;
-
-        $environmentVariables = $this->filterStringNameAndValue($_ENV);
-
-        /** @var SplFixedArray<VariableInterface> $this->variables */
-        $this->variables = new SplFixedArray(count($environmentVariables));
-
-        foreach ($environmentVariables as $name => $value) {
-            $this->variables->offsetSet($index++, new EnvironmentVariable($name, $value));
-        }
-
-        $serverVariables = $this->filterStringNameAndValue($_SERVER);
-
-        $this->variables->setSize($index + count($serverVariables));
-
-        foreach ($serverVariables as $name => $value) {
-            $this->variables->offsetSet($index++, new ServerVariable($name, $value));
-        }
+        /** @var Collection<VariableInterface> $this->variables */
+        $this->variables = Collection::fromGenerator(
+            static function (): Generator {
+                /** @var mixed|string $value */
+                foreach ($_ENV as $name => $value) {
+                    if (! is_string($name)) {
+                        continue;
+                    }
+                    if (! is_string($value)) {
+                        continue;
+                    }
+                    yield new EnvironmentVariable($name, $value);
+                }
+                /** @var mixed|string $value */
+                foreach ($_SERVER as $name => $value) {
+                    if (! is_string($name)) {
+                        continue;
+                    }
+                    if (! is_string($value)) {
+                        continue;
+                    }
+                    yield new ServerVariable($name, $value);
+                }
+            }
+        );
     }
 
     public function count(): int
     {
-        return iterator_count($this->filterType(VariableInterface::class));
+        return $this->variables->count();
     }
 
     public function getEnvironmentVariable(string $name, ?string $default = null): string
     {
-        foreach ($this->findVariable($name, EnvironmentVariableInterface::class) as $variable) {
+        $variable = $this->variables->first(
+            static fn (VariableInterface $variable): bool =>
+                $variable instanceof EnvironmentVariableInterface &&
+                $variable->getName() === $name
+        ) ?? $default;
+
+        if ($variable instanceof VariableInterface) {
             return $variable->getValue();
         }
 
-        if (null === $default) {
-            throw new NotFoundException();
+        if (is_string($variable)) {
+            return $variable;
         }
 
-        return $default;
+        throw new NotFoundException();
     }
 
     public function getEnvironmentVariables(): array
     {
-        $variables = [];
-        foreach ($this->filterType(EnvironmentVariableInterface::class) as $variable) {
-            $variables[$variable->getName()] = $variable->getValue();
-        }
+        /** @var array<string,string> $variables */
+        $variables = $this->variables->reduce(
+            static fn (
+                array $variables,
+                VariableInterface $variable
+            ): array =>
+            $variable instanceof EnvironmentVariableInterface ?
+                ($variables + $variable->asArray()) :
+                $variables,
+            []
+        );
         return $variables;
     }
 
     public function getIterator(): Traversable
     {
         yield from $this->variables;
-//        /** @var VariableInterface $variable */
-//        foreach (new CallbackFilterIterator(
-//                     $this->variables->getIterator(),
-//            static fn ($current) => $current instanceof VariableInterface
-//        ) as $variable) {
-//            yield $variable;
-//        }
     }
 
     public function getServerVariable(string $name, ?string $default = null): string
     {
-        foreach ($this->findVariable($name, ServerVariableInterface::class) as $variable) {
+        $variable = $this->variables->first(
+            static fn (VariableInterface $variable): bool =>
+                $variable instanceof ServerVariableInterface &&
+                $variable->getName() === $name
+        ) ?? $default;
+
+        if ($variable instanceof VariableInterface) {
             return $variable->getValue();
         }
 
-        if (null === $default) {
-            throw new NotFoundException();
+        if (is_string($variable)) {
+            return $variable;
         }
 
-        return $default;
+        throw new NotFoundException();
     }
 
     public function getServerVariables(): array
     {
-        $variables = [];
-        foreach ($this->filterType(ServerVariableInterface::class) as $variable) {
-            $variables[$variable->getName()] = $variable->getValue();
-        }
+        /** @var array<string,string> $variables */
+        $variables = $this->variables->reduce(
+            static fn (
+                array $variables,
+                VariableInterface $variable
+            ): array =>
+            $variable instanceof ServerVariableInterface ?
+                ($variables + $variable->asArray()) :
+                $variables,
+            []
+        );
         return $variables;
     }
 
     public function hasEnvironmentVariable(string $name): bool
     {
-        return iterator_count($this->findVariable($name, EnvironmentVariableInterface::class)) > 0;
+        return null !== $this->variables->first(
+            static fn (
+                VariableInterface $variable
+            ): bool => $variable instanceof EnvironmentVariableInterface && $variable->getName() === $name
+        );
     }
 
     public function hasServerVariable(string $name): bool
     {
-        return iterator_count($this->findVariable($name, ServerVariableInterface::class)) > 0;
+        return null !== $this->variables->first(
+            static fn (
+                VariableInterface $variable
+            ): bool => $variable instanceof ServerVariableInterface && $variable->getName() === $name
+        );
     }
 
     public function setEnvironmentVariable(string $name, string $value): void
     {
-        $environmentVariable = new EnvironmentVariable($name, $value);
-        if (! iterator_count($this->removeVariable($name, EnvironmentVariableInterface::class))) {
-            $_ENV[$name] = $value;
-            $index = $this->variables->count();
-            $this->variables->setSize($index + 1);
-            $this->variables->offsetSet($index, $environmentVariable);
-            return;
-        }
-        foreach ($this->variables as $index => $variable) {
-            if (! $variable instanceof EnvironmentVariableInterface) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
-            $_ENV[$name] = $value;
-            $this->variables->offsetSet($index, $environmentVariable);
-            return;
-        }
-        foreach ($this->variables as $index => $variable) {
-            if ($variable instanceof VariableInterface) {
-                continue;
-            }
-            $_ENV[$name] = $value;
-            $this->variables->offsetSet($index, $environmentVariable);
-            return;
-        }
+        $this->mutate(
+            static fn (VariableInterface $variable): bool =>
+                ! (
+                    $variable instanceof ServerVariableInterface && $variable->getName() === $name
+                ),
+            [new EnvironmentVariable($name, $value)]
+        );
         $_ENV[$name] = $value;
-        $index = $this->variables->count();
-        $this->variables->setSize($index + 1);
-        $this->variables->offsetSet($index, $environmentVariable);
     }
 
     public function setServerVariable(string $name, string $value): void
     {
-        $serverVariable = new ServerVariable($name, $value);
-        if (! iterator_count($this->removeVariable($name, ServerVariableInterface::class))) {
-            $_SERVER[$name] = $value;
-            $index = $this->variables->count();
-            $this->variables->setSize($index + 1);
-            $this->variables->offsetSet($index, $serverVariable);
-            return;
-        }
-        foreach ($this->variables as $index => $variable) {
-            if ($variable instanceof VariableInterface) {
-                continue;
-            }
-            $_SERVER[$name] = $value;
-            $this->variables->offsetSet($index, $serverVariable);
-            return;
-        }
+        $this->mutate(
+            static fn (VariableInterface $variable): bool =>
+                ! (
+                    $variable instanceof ServerVariableInterface && $variable->getName() === $name
+                ),
+            [new ServerVariable($name, $value)]
+        );
+        $_SERVER[$name] = $value;
     }
 
     public function toArray(): array
     {
-        $variables = [];
-        foreach ($this->filterType(VariableInterface::class) as $variable) {
-            $variables[$variable->getName()] = $variable->getValue();
-        }
+        /** @var array<string,string> $variables */
+        $variables = $this->variables->reduce(
+            static fn (
+                array $variables,
+                VariableInterface $variable
+            ): array => ($variables + $variable->asArray()),
+            []
+        );
+
         return $variables;
     }
 
     public function unsetEnvironmentVariable(string $name): void
     {
-        if (! iterator_count($this->removeVariable($name, EnvironmentVariableInterface::class))) {
+        if (! $this->hasEnvironmentVariable($name)) {
             throw new NotFoundException();
         }
+        $this->mutate(
+            static fn (VariableInterface $variable): bool =>
+            ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name)
+        );
         unset($_ENV[$name]);
     }
 
     public function unsetServerVariable(string $name): void
     {
-        if (! iterator_count($this->removeVariable($name, ServerVariableInterface::class))) {
+        if (! $this->hasServerVariable($name)) {
             throw new NotFoundException();
         }
+        $this->mutate(
+            static fn (VariableInterface $variable): bool =>
+            ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name)
+        );
         unset($_SERVER[$name]);
     }
 
     /**
-     * @return array<string,string>
+     * @param Closure(VariableInterface):bool $mutation
+     * @param array<VariableInterface>        $variables
      */
-    private function filterStringNameAndValue(array $input): array
+    private function mutate(Closure $mutation, array $variables = []): void
     {
-        /**
-         * @var array<string,string>
-         */
-        return array_filter(
-            $input,
-            static fn ($value, $name): bool => is_string($name) && is_string($value),
-            ARRAY_FILTER_USE_BOTH
-        );
-    }
-
-    /**
-     * @param class-string<VariableInterface> $type
-     *
-     * @return Traversable<int,VariableInterface>
-     */
-    private function filterType(string $type): iterable
-    {
-        foreach ($this->variables as $variable) {
-            if (! is_a($variable, $type)) {
-                continue;
-            }
-            yield $variable;
-        }
-    }
-
-    /**
-     * @param class-string<VariableInterface> $type
-     *
-     * @return Traversable<int,VariableInterface>
-     */
-    private function findVariable(string $name, string $type): iterable
-    {
-        foreach ($this->variables as $variable) {
-            if (! is_a($variable, $type)) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
-            yield $variable;
-        }
-    }
-
-    /**
-     * @param class-string<VariableInterface> $type
-     *
-     * @return Traversable<int,VariableInterface>
-     */
-    private function removeVariable(string $name, string $type): iterable
-    {
-        foreach ($this->variables as $index => $variable) {
-            if (! is_a($variable, $type)) {
-                continue;
-            }
-            if ($variable->getName() !== $name) {
-                continue;
-            }
-            $this->variables->offsetUnset($index);
-            yield $variable;
-        }
+        /** @var Collection<VariableInterface> $this->variables */
+        $this->variables = $this->variables
+            ->filter($mutation)
+            ->append($variables);
     }
 }

@@ -44,7 +44,7 @@ final class EnvironmentTest extends AbstractTestCase
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::asArray
+     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
@@ -154,7 +154,7 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::asArray
+     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
@@ -359,7 +359,7 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::asArray
+     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName

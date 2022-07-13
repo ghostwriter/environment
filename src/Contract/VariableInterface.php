@@ -7,6 +7,13 @@ namespace Ghostwriter\Environment\Contract;
 interface VariableInterface
 {
     /**
+     * Get the variable as an array ['name'=>'value'].
+     *
+     * @return array<string,string>
+     */
+    public function asArray(): array;
+
+    /**
      * Get the variable name.
      */
     public function getName(): string;

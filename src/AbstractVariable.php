@@ -11,21 +11,21 @@ use function str_contains;
 use function trim;
 
 /**
- * @see \Ghostwriter\Environment\Tests\Unit\VariableTest
+ * @see \Ghostwriter\Environment\Tests\Unit\AbstractVariableTest
  */
-final class Variable implements VariableInterface
+abstract class AbstractVariable implements VariableInterface
 {
     /**
      * @throws InvalidNameException  if $name is empty, contains an equals sign `=`,
      *                               or the NULL-byte character `\0`
      * @throws InvalidValueException if $value starts/ends with whitespace character or contains the NULL-byte character `\0`
      */
-    public function __construct(
+    final public function __construct(
         private string $name,
         private string $value
     ) {
-        $this->assertValidVariableName($this->name);
-        $this->assertValidVariableValue($this->value);
+        $this->assertValidName($this->name);
+        $this->assertValidValue($this->value);
     }
 
     public function getName(): string
@@ -38,7 +38,14 @@ final class Variable implements VariableInterface
         return $this->value;
     }
 
-    private function assertValidVariableName(string $name): void
+    public function toArray(): array
+    {
+        return [
+            $this->name => $this->value,
+        ];
+    }
+
+    private function assertValidName(string $name): void
     {
         $trimmed = trim($name);
         if (
@@ -51,12 +58,9 @@ final class Variable implements VariableInterface
         }
     }
 
-    private function assertValidVariableValue(string $value): void
+    private function assertValidValue(string $value): void
     {
-        if (
-            $value !== trim($value) ||
-            str_contains($value, "\0")
-        ) {
+        if ($value !== trim($value) || str_contains($value, "\0")) {
             throw new InvalidValueException($value);
         }
     }

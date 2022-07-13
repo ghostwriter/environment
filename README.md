@@ -6,7 +6,7 @@
 [![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/environment)](https://packagist.org/packages/ghostwriter/environment)
 [![Downloads](https://badgen.net/packagist/dt/ghostwriter/environment?color=blue)](https://packagist.org/packages/ghostwriter/environment)
 
-Provides Environment Variables derived from the `getenv()` method, `$_ENV` and `$_SERVER` super-globals
+Provides Environment Variables derived from `$_ENV` and `$_SERVER` super-globals
 
 ## Installation
 
@@ -21,24 +21,27 @@ composer require ghostwriter/environment
 ```php
 $environment = new \Ghostwriter\Environment\Environment();
 
-$environment->count();
-$environment->toArray();
-$environment->getIterator();
+$environment->count(); // int
+$environment->toArray(); // array<string,string>
+$environment->getIterator(); // Traversable<int,VariableInterface>
+$environment->getEnvironmentVariables(); // array<string,string>
+$environment->getServerVariables(); // array<string,string>
 
-$environment->hasVariable('APP_ENV'); // false
-$environment->getVariable('APP_ENV', 'dev'); // dev
-$environment->getVariable('APP_ENV'); // throws NotFoundException
-$environment->setVariable('APP_ENV', 'production');
-$environment->hasVariable('APP_ENV'); // true
-$environment->getVariable('APP_ENV'); // production
+$environment->hasEnvironmentVariable('APP_ENV'); // false
+$environment->getEnvironmentVariable('APP_ENV', 'dev'); // dev
+$environment->getEnvironmentVariable('APP_ENV'); // throws NotFoundException
+$environment->setEnvironmentVariable('APP_ENV', 'production');
+$environment->hasEnvironmentVariable('APP_ENV'); // true
+$environment->getEnvironmentVariable('APP_ENV'); // production
+$environment->unsetEnvironmentVariable('APP_ENV');
 
-$environment->setVariable('APP_KEY', 'secrete');
-$environment->hasVariable('APP_KEY'); // true
-$environment->getVariable('APP_KEY'); // secrete
-$environment->unsetVariable('APP_KEY');
-$environment->hasVariable('APP_KEY'); // false
-$environment->getVariable('APP_KEY', 'fallback-value'); // fallback-value
-$environment->getVariable('APP_KEY'); // throws NotFoundException
+$environment->setServerVariable('APP_KEY', 'secrete');
+$environment->hasServerVariable('APP_KEY'); // true
+$environment->getServerVariable('APP_KEY'); // secrete
+$environment->unsetServerVariable('APP_KEY');
+$environment->hasServerVariable('APP_KEY'); // false
+$environment->getServerVariable('APP_KEY', 'fallback-value'); // fallback-value
+$environment->getServerVariable('APP_KEY'); // throws NotFoundException
 ```
 
 ## Testing

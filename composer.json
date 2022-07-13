@@ -1,12 +1,13 @@
 {
     "name": "ghostwriter/environment",
-    "description": "Provides Environment Variables derived from the `getenv()` method, `$_ENV` and `$_SERVER` super-globals",
+    "description": "Provides Environment Variables derived from `$_ENV` and `$_SERVER` super-globals",
     "license": "BSD-3-Clause",
     "type": "library",
     "keywords": [
         "ghostwriter",
         "environment",
-        "environment-variables"
+        "environment-variables",
+        "server-variables"
     ],
     "authors": [
         {
@@ -31,7 +32,8 @@
         }
     ],
     "require": {
-        "php": ">=8.0,<8.2"
+        "php": ">=8.0,<8.2",
+        "ghostwriter/collection": "^0.4.1"
     },
     "require-dev": {
         "infection/infection": "^0.26.13",

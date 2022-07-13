@@ -4,34 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d3468eea83217f39cabc8d5079d2ffe5",
+    "content-hash": "be1806aecad715964f5963dd4be65bd7",
     "packages": [
         {
             "name": "ghostwriter/collection",
-            "version": "0.2.0",
+            "version": "0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ghostwriter/collection.git",
-                "reference": "b7b002c1f8ded61905c8d33967f6bbf49354796b"
+                "reference": "6ea7d8419d027a7790c11851714407cd51ecd5ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ghostwriter/collection/zipball/b7b002c1f8ded61905c8d33967f6bbf49354796b",
-                "reference": "b7b002c1f8ded61905c8d33967f6bbf49354796b",
+                "url": "https://api.github.com/repos/ghostwriter/collection/zipball/6ea7d8419d027a7790c11851714407cd51ecd5ac",
+                "reference": "6ea7d8419d027a7790c11851714407cd51ecd5ac",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0,<8.2"
             },
             "require-dev": {
+                "infection/infection": "^0.26.13",
                 "phpbench/phpbench": "^1.2.5",
                 "phpunit/phpunit": "^9.5.21",
                 "psalm/plugin-phpunit": "^0.17.0",
-                "rector/rector": "^0.13.6",
-                "roave/infection-static-analysis-plugin": "^1.20.0",
-                "roave/security-advisories": "dev-latest",
-                "symplify/easy-coding-standard": "^11.0.5",
-                "vimeo/psalm": "^4.23.0"
+                "rector/rector": "^0.13.8",
+                "symplify/easy-coding-standard": "^11.0.8",
+                "vimeo/psalm": "^4.24.0"
             },
             "type": "library",
             "autoload": {
@@ -70,7 +69,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-06-23T02:27:39+00:00"
+            "time": "2022-07-13T06:35:23+00:00"
         }
     ],
     "packages-dev": [

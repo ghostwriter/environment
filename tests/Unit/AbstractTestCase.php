@@ -40,10 +40,18 @@ abstract class AbstractTestCase extends TestCase
             }
         }
 
-        $this->backupEnvironmentVariables = $environment;
+        $this->backupEnvironmentVariables = array_filter(
+            $environment,
+            static fn ($value, $name): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        );
 
         /** @var array<string,string> $this->backupServerVariables */
-        $this->backupServerVariables = $_SERVER;
+        $this->backupServerVariables = array_filter(
+            $_SERVER,
+            static fn ($value, $name): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        );
     }
 
     protected function tearDown(): void

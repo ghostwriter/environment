@@ -21,9 +21,11 @@ composer require ghostwriter/environment
 ```php
 $environment = new \Ghostwriter\Environment\Environment();
 
-$environment->count();
-$environment->toArray();
-$environment->getIterator();
+$environment->count(); // int
+$environment->toArray(); // array<string,string>
+$environment->getIterator(); // Traversable<int,VariableInterface>
+$environment->getEnvironmentVariables(); // array<string,string>
+$environment->getServerVariables(); // array<string,string>
 
 $environment->hasEnvironmentVariable('APP_ENV'); // false
 $environment->getEnvironmentVariable('APP_ENV', 'dev'); // dev

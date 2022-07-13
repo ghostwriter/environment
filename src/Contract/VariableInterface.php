@@ -11,7 +11,7 @@ interface VariableInterface
      *
      * @return array<string,string>
      */
-    public function asArray(): array;
+    public function toArray(): array;
 
     /**
      * Get the variable name.

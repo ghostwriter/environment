@@ -27,15 +27,13 @@ final class Environment implements EnvironmentInterface
      */
     private Collection $variables;
 
-    final public function __construct()
+    public function __construct()
     {
         /** @var Collection<VariableInterface> $this->variables */
         $this->variables = Collection::fromGenerator(
             static function (): Generator {
                 /** @var array<string,string> $_ENV */
-                if ([] === $_ENV) {
-                    $_ENV = function_exists('getenv') ? (getenv() ?: []) : [];
-                }
+                $_ENV = ([] === $_ENV) ? (function_exists('getenv') ? (getenv() ?: []) : []) : $_ENV;
 
                 if ([] === $_ENV) {
                     $variablesOrder = ini_get('variables_order');
@@ -55,9 +53,11 @@ final class Environment implements EnvironmentInterface
                     if (! is_string($name)) {
                         continue;
                     }
+
                     if (! is_string($value)) {
                         continue;
                     }
+
                     yield new EnvironmentVariable($name, $value);
                 }
                 /**
@@ -103,23 +103,21 @@ final class Environment implements EnvironmentInterface
 
     public function getEnvironmentVariables(): array
     {
-        /** @var array<string,string> $variables */
-        $variables = $this->variables
+        /** @var array<string,string> */
+        return $this->variables
             ->filter(
                 static fn (
                     VariableInterface $variable
                 ): bool => $variable instanceof EnvironmentVariableInterface
             )
+            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
             ->reduce(
                 static fn (
                     mixed $variables,
-                    VariableInterface $variable
-                ): array => is_array($variables) ?
-                    ($variables + $variable->toArray()) :
-                    $variable->toArray()
+                    array $variable
+                ): array => is_array($variables) ? ($variables + $variable) : $variable,
+                []
             );
-
-        return $variables;
     }
 
     public function getIterator(): Traversable
@@ -155,13 +153,13 @@ final class Environment implements EnvironmentInterface
                     VariableInterface $variable
                 ): bool => $variable instanceof ServerVariableInterface
             )
+            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
             ->reduce(
                 static fn (
                     mixed $variables,
-                    VariableInterface $variable
-                ): array => is_array($variables) ?
-                    $variables + $variable->toArray() :
-                    $variable->toArray()
+                    array $variable
+                ): array => is_array($variables) ? $variables + $variable : $variable,
+                []
             );
         return $variables;
     }
@@ -187,10 +185,7 @@ final class Environment implements EnvironmentInterface
     public function setEnvironmentVariable(string $name, string $value): void
     {
         $this->mutate(
-            static fn (VariableInterface $variable): bool =>
-                ! (
-                    $variable instanceof ServerVariableInterface && $variable->getName() === $name
-                ),
+            static fn (VariableInterface $variable): bool => ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name),
             [new EnvironmentVariable($name, $value)]
         );
         $_ENV[$name] = $value;
@@ -199,10 +194,7 @@ final class Environment implements EnvironmentInterface
     public function setServerVariable(string $name, string $value): void
     {
         $this->mutate(
-            static fn (VariableInterface $variable): bool =>
-                ! (
-                    $variable instanceof ServerVariableInterface && $variable->getName() === $name
-                ),
+            static fn (VariableInterface $variable): bool => ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name),
             [new ServerVariable($name, $value)]
         );
         $_SERVER[$name] = $value;
@@ -210,16 +202,15 @@ final class Environment implements EnvironmentInterface
 
     public function toArray(): array
     {
-        /** @var array<string,string> $variables */
-        $variables = $this->variables
+        /** @var array<string,string> */
+        return $this->variables
+            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
             ->reduce(
                 static fn (
                     mixed $variables,
-                    VariableInterface $variable
-                ): array => ! is_array($variables) ? $variable->toArray() : $variables + $variable->toArray()
+                    array $variable
+                ): array => is_array($variables) ? $variables + $variable : $variable
             );
-
-        return $variables;
     }
 
     public function unsetEnvironmentVariable(string $name): void

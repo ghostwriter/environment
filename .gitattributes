@@ -15,8 +15,6 @@
 /infection.json.dist export-ignore
 /mkdocs.yml export-ignore
 /mkdocs.yml.dist export-ignore
-/phpbench.json export-ignore
-/phpbench.json.dist export-ignore
 /phpcs.xml export-ignore
 /phpcs.xml.dist export-ignore
 /phpunit.xml export-ignore

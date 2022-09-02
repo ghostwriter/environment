@@ -58,6 +58,7 @@ abstract class AbstractVariableTest extends AbstractTestCase
      * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
      * @covers \Ghostwriter\Environment\AbstractVariable::getName
      * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     *
      * @dataProvider environmentVariablesProvider
      */
     public function testConstruct(string $name, string $value): void

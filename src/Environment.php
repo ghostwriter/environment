@@ -222,6 +222,7 @@ final class Environment implements EnvironmentInterface
             static fn (VariableInterface $variable): bool =>
             ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name)
         );
+        /** @var non-empty-string $name */
         unset($_ENV[$name]);
     }
 
@@ -234,6 +235,7 @@ final class Environment implements EnvironmentInterface
             static fn (VariableInterface $variable): bool =>
             ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name)
         );
+        /** @var non-empty-string $name */
         unset($_SERVER[$name]);
     }
 

@@ -33,7 +33,7 @@ final class Environment implements EnvironmentInterface
         $this->variables = Collection::fromGenerator(
             static function (): Generator {
                 /** @var array<string,string> $_ENV */
-                $_ENV = ([] === $_ENV) ? (function_exists('getenv') ? (getenv() ?: []) : []) : $_ENV;
+                $_ENV = ([] === $_ENV && function_exists('getenv')) ? getenv() : $_ENV;
 
                 if ([] === $_ENV) {
                     $variablesOrder = ini_get('variables_order');
@@ -45,6 +45,7 @@ final class Environment implements EnvironmentInterface
                         );
                     }
                 }
+
                 /**
                  * @var mixed|string $name
                  * @var mixed|string $value
@@ -60,6 +61,7 @@ final class Environment implements EnvironmentInterface
 
                     yield new EnvironmentVariable($name, $value);
                 }
+
                 /**
                  * @var mixed|string $name
                  * @var mixed|string $value
@@ -68,9 +70,11 @@ final class Environment implements EnvironmentInterface
                     if (! is_string($name)) {
                         continue;
                     }
+
                     if (! is_string($value)) {
                         continue;
                     }
+
                     yield new ServerVariable($name, $value);
                 }
             }
@@ -103,21 +107,17 @@ final class Environment implements EnvironmentInterface
 
     public function getEnvironmentVariables(): array
     {
-        /** @var array<string,string> */
-        return $this->variables
+        /** @var array<string,string> $variables */
+        $variables = $this->variables
             ->filter(
                 static fn (
                     VariableInterface $variable
                 ): bool => $variable instanceof EnvironmentVariableInterface
             )
             ->map(static fn (VariableInterface $variable): array => $variable->toArray())
-            ->reduce(
-                static fn (
-                    mixed $variables,
-                    array $variable
-                ): array => is_array($variables) ? ($variables + $variable) : $variable,
-                []
-            );
+            ->reduce(static fn (?array $variables, array $variable): array => ($variables ?? []) + $variable, []);
+
+        return $variables;
     }
 
     public function getIterator(): Traversable
@@ -202,15 +202,11 @@ final class Environment implements EnvironmentInterface
 
     public function toArray(): array
     {
-        /** @var array<string,string> */
-        return $this->variables
+        /** @var array<string,string> $variables */
+        $variables = $this->variables
             ->map(static fn (VariableInterface $variable): array => $variable->toArray())
-            ->reduce(
-                static fn (
-                    mixed $variables,
-                    array $variable
-                ): array => is_array($variables) ? $variables + $variable : $variable
-            );
+            ->reduce(static fn (?array $variables, array $variable): array => ($variables ?? []) + $variable, []);
+        return $variables;
     }
 
     public function unsetEnvironmentVariable(string $name): void
@@ -218,6 +214,7 @@ final class Environment implements EnvironmentInterface
         if (! $this->hasEnvironmentVariable($name)) {
             throw new NotFoundException();
         }
+
         $this->mutate(
             static fn (VariableInterface $variable): bool =>
             ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name)
@@ -231,10 +228,12 @@ final class Environment implements EnvironmentInterface
         if (! $this->hasServerVariable($name)) {
             throw new NotFoundException();
         }
+
         $this->mutate(
             static fn (VariableInterface $variable): bool =>
             ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name)
         );
+
         /** @var non-empty-string $name */
         unset($_SERVER[$name]);
     }

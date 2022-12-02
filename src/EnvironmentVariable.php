@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Ghostwriter\Environment;
 
 use Ghostwriter\Environment\Contract\EnvironmentVariableInterface;
+use Ghostwriter\Environment\Traits\VariableTrait;
 
 /**
  * @see \Ghostwriter\Environment\Tests\Unit\EnvironmentVariableTest
  */
-final class EnvironmentVariable extends AbstractVariable implements EnvironmentVariableInterface
+final class EnvironmentVariable implements EnvironmentVariableInterface
 {
+    use VariableTrait;
 }

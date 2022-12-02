@@ -23,11 +23,7 @@ abstract class AbstractTestCase extends TestCase
         parent::setUp();
 
         /** @var array<string,string> $environment */
-        $environment = $_ENV;
-
-        if ([] === $environment) {
-            $environment = function_exists('getenv') ? getenv() ?: [] : [];
-        }
+        $environment = ([] === $_ENV && function_exists('getenv')) ? getenv() : $_ENV;
 
         if ([] === $environment) {
             $variablesOrder = ini_get('variables_order');

@@ -33,15 +33,15 @@
     ],
     "require": {
         "php": ">=8.0,<8.3",
-        "ghostwriter/collection": "^0.5"
+        "ghostwriter/collection": "^1.0"
     },
     "require-dev": {
         "infection/infection": "^0.26",
         "phpunit/phpunit": "^9.5",
-        "psalm/plugin-phpunit": "^0.17",
+        "psalm/plugin-phpunit": "^0.18",
         "rector/rector": "^0.14",
         "symplify/easy-coding-standard": "^11.1",
-        "vimeo/psalm": "^4.29"
+        "vimeo/psalm": "^5.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

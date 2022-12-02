@@ -43,12 +43,12 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
      * @covers \Ghostwriter\Environment\Environment::getServerVariables
      */
@@ -59,9 +59,9 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getIterator
@@ -72,11 +72,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -99,11 +99,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -125,9 +125,9 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getIterator
@@ -139,10 +139,10 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
      */
@@ -153,12 +153,12 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
@@ -198,11 +198,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -224,11 +224,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -249,10 +249,10 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
      * @covers \Ghostwriter\Environment\Environment::mutate
@@ -268,10 +268,10 @@ final class EnvironmentTest extends AbstractTestCase
 
     /**
      * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable
      * @covers \Ghostwriter\Environment\Environment::mutate
      * @covers \Ghostwriter\Environment\Environment::setServerVariable
@@ -284,11 +284,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
@@ -312,11 +312,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -335,11 +335,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
@@ -358,12 +358,12 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::toArray
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::toArray
      */
@@ -377,11 +377,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
@@ -405,10 +405,10 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
@@ -425,11 +425,11 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
-     * @covers \Ghostwriter\Environment\AbstractVariable::getValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::getServerVariable
@@ -453,10 +453,10 @@ final class EnvironmentTest extends AbstractTestCase
     }
 
     /**
-     * @covers \Ghostwriter\Environment\AbstractVariable::__construct
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidName
-     * @covers \Ghostwriter\Environment\AbstractVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\AbstractVariable::getName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
+     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
      * @covers \Ghostwriter\Environment\Environment::__construct
      * @covers \Ghostwriter\Environment\Environment::count
      * @covers \Ghostwriter\Environment\Environment::hasServerVariable

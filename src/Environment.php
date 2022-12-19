@@ -88,21 +88,22 @@ final class Environment implements EnvironmentInterface
 
     public function getEnvironmentVariable(string $name, ?string $default = null): string
     {
+        /** @var ?EnvironmentVariableInterface $variable */
         $variable = $this->variables->first(
             static fn (VariableInterface $variable): bool =>
                 $variable instanceof EnvironmentVariableInterface &&
                 $variable->getName() === $name
-        ) ?? $default;
+        );
 
         if ($variable instanceof VariableInterface) {
             return $variable->getValue();
         }
 
-        if (is_string($variable)) {
-            return $variable;
+        if (null === $default) {
+            throw new NotFoundException();
         }
 
-        throw new NotFoundException();
+        return $default;
     }
 
     public function getEnvironmentVariables(): array
@@ -127,21 +128,22 @@ final class Environment implements EnvironmentInterface
 
     public function getServerVariable(string $name, ?string $default = null): string
     {
+        /** @var ?ServerVariableInterface $variable */
         $variable = $this->variables->first(
             static fn (VariableInterface $variable): bool =>
                 $variable instanceof ServerVariableInterface &&
                 $variable->getName() === $name
-        ) ?? $default;
+        );
 
         if ($variable instanceof VariableInterface) {
             return $variable->getValue();
         }
 
-        if (is_string($variable)) {
-            return $variable;
+        if (null === $default) {
+            throw new NotFoundException();
         }
 
-        throw new NotFoundException();
+        return $default;
     }
 
     public function getServerVariables(): array

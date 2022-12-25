@@ -47,7 +47,6 @@ use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\Renaming\Rector\FileWithoutNamespace\PseudoNamespaceToNamespaceRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use Rector\TypeDeclaration\Rector\ClassMethod\AddArrayReturnDocTypeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
@@ -77,7 +76,6 @@ return static function (RectorConfig $rectorConfig): void {
         SetList::PRIVATIZATION,
         SetList::PSR_4,
         SetList::TYPE_DECLARATION,
-        SetList::TYPE_DECLARATION_STRICT,
         SetList::EARLY_RETURN,
         SetList::PHP_52,
         SetList::PHP_53,
@@ -103,7 +101,6 @@ return static function (RectorConfig $rectorConfig): void {
         RemoveEmptyClassMethodRector::class,
         RemoveEmptyTestMethodRector::class,
         StringClassNameToClassConstantRector::class,
-        AddArrayReturnDocTypeRector::class,
     ]);
     $rectorConfig->rules([
         AddSeeTestAnnotationRector::class,

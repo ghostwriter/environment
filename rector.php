@@ -8,7 +8,6 @@ use Rector\Core\ValueObject\PhpVersion;
 use Rector\DeadCode\Rector\ClassMethod\RemoveEmptyClassMethodRector;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
-use Rector\Php74\Rector\Property\TypedPropertyRector;
 use Rector\PHPUnit\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\PHPUnit\Rector\Class_\ConstructClassMethodToSetUpTestCaseRector;
 use Rector\PHPUnit\Rector\Class_\RemoveDataProviderTestPrefixRector;
@@ -141,7 +140,6 @@ return static function (RectorConfig $rectorConfig): void {
         SpecificAssertInternalTypeRector::class,
         TestListenerToHooksRector::class,
         TryCatchToExpectExceptionRector::class,
-        TypedPropertyRector::class,
         UseSpecificWillMethodRector::class,
     ]);
 };

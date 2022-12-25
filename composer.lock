@@ -4,34 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee0b9f27440eb631e9aa4b59bda04d2c",
+    "content-hash": "9f680e13a0dd35fdfd68e20e0eafc8cd",
     "packages": [
         {
             "name": "ghostwriter/collection",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ghostwriter/collection.git",
-                "reference": "18f6e24dc90d3e3c13b3657662bed4d157e73d2a"
+                "reference": "c5cc13cbc2563b6d3236e4877d6425a865b6cfa4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ghostwriter/collection/zipball/18f6e24dc90d3e3c13b3657662bed4d157e73d2a",
-                "reference": "18f6e24dc90d3e3c13b3657662bed4d157e73d2a",
+                "url": "https://api.github.com/repos/ghostwriter/collection/zipball/c5cc13cbc2563b6d3236e4877d6425a865b6cfa4",
+                "reference": "c5cc13cbc2563b6d3236e4877d6425a865b6cfa4",
                 "shasum": ""
             },
             "require": {
-                "ghostwriter/option": "^1.2.0",
+                "ghostwriter/option": "^1.2",
                 "php": ">=8.0,<8.3"
             },
             "require-dev": {
                 "infection/infection": "^0.26",
-                "phpbench/phpbench": "^1.2",
                 "phpunit/phpunit": "^9.5",
                 "psalm/plugin-phpunit": "^0.18",
-                "rector/rector": "^0.14",
+                "rector/rector": "^0.15",
                 "symplify/easy-coding-standard": "^11.1",
-                "vimeo/psalm": "^5.0"
+                "vimeo/psalm": "^5.4"
             },
             "type": "library",
             "autoload": {
@@ -70,7 +69,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-02T19:45:55+00:00"
+            "time": "2022-12-25T11:43:45+00:00"
         },
         {
             "name": "ghostwriter/option",
@@ -2493,27 +2492,26 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.14.8",
+            "version": "0.15.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "46ee9a173a2b2645ca92a75ffc17460139fa226e"
+                "reference": "5bc89fa73d0be2769e02e49a0e924c95b1842093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/46ee9a173a2b2645ca92a75ffc17460139fa226e",
-                "reference": "46ee9a173a2b2645ca92a75ffc17460139fa226e",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/5bc89fa73d0be2769e02e49a0e924c95b1842093",
+                "reference": "5bc89fa73d0be2769e02e49a0e924c95b1842093",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.9.0"
+                "phpstan/phpstan": "^1.9.4"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
                 "rector/rector-downgrade-php": "*",
                 "rector/rector-php-parser": "*",
-                "rector/rector-phpoffice": "*",
                 "rector/rector-phpunit": "*",
                 "rector/rector-symfony": "*"
             },
@@ -2538,7 +2536,7 @@
             "description": "Instant Upgrade and Automated Refactoring of any PHP code",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.14.8"
+                "source": "https://github.com/rectorphp/rector/tree/0.15.2"
             },
             "funding": [
                 {
@@ -2546,7 +2544,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-11-14T14:09:49+00:00"
+            "time": "2022-12-24T12:55:36+00:00"
         },
         {
             "name": "sanmai/later",
@@ -4636,16 +4634,16 @@
         },
         {
             "name": "symplify/easy-coding-standard",
-            "version": "11.1.20",
+            "version": "11.1.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/easy-coding-standard.git",
-                "reference": "860b88c552af9682ad9715e8fa400916fa529e24"
+                "reference": "7d7eda3a8b42198b84ae0e5d67c4b15c2cd365d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/easy-coding-standard/zipball/860b88c552af9682ad9715e8fa400916fa529e24",
-                "reference": "860b88c552af9682ad9715e8fa400916fa529e24",
+                "url": "https://api.github.com/repos/symplify/easy-coding-standard/zipball/7d7eda3a8b42198b84ae0e5d67c4b15c2cd365d1",
+                "reference": "7d7eda3a8b42198b84ae0e5d67c4b15c2cd365d1",
                 "shasum": ""
             },
             "require": {
@@ -4675,7 +4673,7 @@
             ],
             "description": "Prefixed scoped version of ECS package",
             "support": {
-                "source": "https://github.com/symplify/easy-coding-standard/tree/11.1.20"
+                "source": "https://github.com/symplify/easy-coding-standard/tree/11.1.24"
             },
             "funding": [
                 {
@@ -4687,7 +4685,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-19T12:28:29+00:00"
+            "time": "2022-12-23T15:01:12+00:00"
         },
         {
             "name": "thecodingmachine/safe",
@@ -4880,16 +4878,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "5.3.0",
+            "version": "5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "b6faa3e96b8eb50ec71384c53799b8a107236bb6"
+                "reference": "62db5d4f6a7ae0a20f7cc5a4952d730272fc0863"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/b6faa3e96b8eb50ec71384c53799b8a107236bb6",
-                "reference": "b6faa3e96b8eb50ec71384c53799b8a107236bb6",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/62db5d4f6a7ae0a20f7cc5a4952d730272fc0863",
+                "reference": "62db5d4f6a7ae0a20f7cc5a4952d730272fc0863",
                 "shasum": ""
             },
             "require": {
@@ -4979,9 +4977,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/5.3.0"
+                "source": "https://github.com/vimeo/psalm/tree/5.4.0"
             },
-            "time": "2022-12-18T18:15:37+00:00"
+            "time": "2022-12-19T21:31:12+00:00"
         },
         {
             "name": "webmozart/assert",

@@ -90,7 +90,7 @@ final class Environment implements EnvironmentInterface
     {
         /** @var ?EnvironmentVariableInterface $variable */
         $variable = $this->variables->first(
-            static fn (VariableInterface $variable): bool =>
+            static fn (VariableInterface $variable, int $_): bool =>
                 $variable instanceof EnvironmentVariableInterface &&
                 $variable->getName() === $name
         );
@@ -112,11 +112,15 @@ final class Environment implements EnvironmentInterface
         $variables = $this->variables
             ->filter(
                 static fn (
-                    VariableInterface $variable
+                    VariableInterface $variable,
+                    int $_
                 ): bool => $variable instanceof EnvironmentVariableInterface
             )
-            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
-            ->reduce(static fn (?array $variables, array $variable): array => ($variables ?? []) + $variable, []);
+            ->map(static fn (VariableInterface $variable, int $_): array => $variable->toArray())
+            ->reduce(
+                static fn (?array $variables, array $variable, int $_): array => ($variables ?? []) + $variable,
+                []
+            );
 
         return $variables;
     }
@@ -130,7 +134,7 @@ final class Environment implements EnvironmentInterface
     {
         /** @var ?ServerVariableInterface $variable */
         $variable = $this->variables->first(
-            static fn (VariableInterface $variable): bool =>
+            static fn (VariableInterface $variable, int $_): bool =>
                 $variable instanceof ServerVariableInterface &&
                 $variable->getName() === $name
         );
@@ -152,14 +156,16 @@ final class Environment implements EnvironmentInterface
         $variables = $this->variables
             ->filter(
                 static fn (
-                    VariableInterface $variable
+                    VariableInterface $variable,
+                    int $_
                 ): bool => $variable instanceof ServerVariableInterface
             )
-            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
+            ->map(static fn (VariableInterface $variable, int $_): array => $variable->toArray())
             ->reduce(
                 static fn (
                     mixed $variables,
-                    array $variable
+                    array $variable,
+                    int $_
                 ): array => is_array($variables) ? $variables + $variable : $variable,
                 []
             );
@@ -170,7 +176,8 @@ final class Environment implements EnvironmentInterface
     {
         return null !== $this->variables->first(
             static fn (
-                VariableInterface $variable
+                VariableInterface $variable,
+                int $_
             ): bool => $variable instanceof EnvironmentVariableInterface && $variable->getName() === $name
         );
     }
@@ -179,7 +186,8 @@ final class Environment implements EnvironmentInterface
     {
         return null !== $this->variables->first(
             static fn (
-                VariableInterface $variable
+                VariableInterface $variable,
+                int $_
             ): bool => $variable instanceof ServerVariableInterface && $variable->getName() === $name
         );
     }
@@ -187,7 +195,10 @@ final class Environment implements EnvironmentInterface
     public function setEnvironmentVariable(string $name, string $value): void
     {
         $this->mutate(
-            static fn (VariableInterface $variable): bool => ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name),
+            static fn (
+                VariableInterface $variable,
+                int $_
+            ): bool => ! ($variable instanceof EnvironmentVariableInterface && $variable->getName() === $name),
             [new EnvironmentVariable($name, $value)]
         );
         $_ENV[$name] = $value;
@@ -196,7 +207,10 @@ final class Environment implements EnvironmentInterface
     public function setServerVariable(string $name, string $value): void
     {
         $this->mutate(
-            static fn (VariableInterface $variable): bool => ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name),
+            static fn (
+                VariableInterface $variable,
+                int $_
+            ): bool => ! ($variable instanceof ServerVariableInterface && $variable->getName() === $name),
             [new ServerVariable($name, $value)]
         );
         $_SERVER[$name] = $value;
@@ -206,8 +220,11 @@ final class Environment implements EnvironmentInterface
     {
         /** @var array<string,string> $variables */
         $variables = $this->variables
-            ->map(static fn (VariableInterface $variable): array => $variable->toArray())
-            ->reduce(static fn (?array $variables, array $variable): array => ($variables ?? []) + $variable, []);
+            ->map(static fn (VariableInterface $variable, int $_): array => $variable->toArray())
+            ->reduce(
+                static fn (?array $variables, array $variable, int $_): array => ($variables ?? []) + $variable,
+                []
+            );
         return $variables;
     }
 
@@ -241,8 +258,8 @@ final class Environment implements EnvironmentInterface
     }
 
     /**
-     * @param Closure(VariableInterface):bool $mutation
-     * @param array<VariableInterface>        $variables
+     * @param Closure(VariableInterface,int):bool $mutation
+     * @param array<VariableInterface>            $variables
      */
     private function mutate(Closure $mutation, array $variables = []): void
     {

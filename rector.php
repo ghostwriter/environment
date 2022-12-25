@@ -58,7 +58,7 @@ return static function (RectorConfig $rectorConfig): void {
         PHPUnitLevelSetList::UP_TO_PHPUNIT_70,
         PHPUnitLevelSetList::UP_TO_PHPUNIT_80,
         PHPUnitLevelSetList::UP_TO_PHPUNIT_90,
-        PHPUnitLevelSetList::UP_TO_PHPUNIT_100,
+        # PHPUnitLevelSetList::UP_TO_PHPUNIT_100,
         LevelSetList::UP_TO_PHP_54,
         LevelSetList::UP_TO_PHP_55,
         LevelSetList::UP_TO_PHP_56,

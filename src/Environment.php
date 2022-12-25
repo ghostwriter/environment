@@ -25,12 +25,12 @@ final class Environment implements EnvironmentInterface
     /**
      * @var Collection<VariableInterface>
      */
-    private Collection $variables;
+    private Collection $collection;
 
     public function __construct()
     {
-        /** @var Collection<VariableInterface> $this->variables */
-        $this->variables = Collection::fromGenerator(
+        /** @var Collection<VariableInterface> $this->collection */
+        $this->collection = Collection::fromGenerator(
             static function (): Generator {
                 /** @var array<string,string> $_ENV */
                 $_ENV = ([] === $_ENV && function_exists('getenv')) ? getenv() : $_ENV;
@@ -83,13 +83,13 @@ final class Environment implements EnvironmentInterface
 
     public function count(): int
     {
-        return $this->variables->count();
+        return $this->collection->count();
     }
 
     public function getEnvironmentVariable(string $name, ?string $default = null): string
     {
         /** @var ?EnvironmentVariableInterface $variable */
-        $variable = $this->variables->first(
+        $variable = $this->collection->first(
             static fn (VariableInterface $variable, int $_): bool =>
                 $variable instanceof EnvironmentVariableInterface &&
                 $variable->getName() === $name
@@ -109,7 +109,7 @@ final class Environment implements EnvironmentInterface
     public function getEnvironmentVariables(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables
+        $variables = $this->collection
             ->filter(
                 static fn (
                     VariableInterface $variable,
@@ -127,13 +127,13 @@ final class Environment implements EnvironmentInterface
 
     public function getIterator(): Traversable
     {
-        yield from $this->variables;
+        yield from $this->collection;
     }
 
     public function getServerVariable(string $name, ?string $default = null): string
     {
         /** @var ?ServerVariableInterface $variable */
-        $variable = $this->variables->first(
+        $variable = $this->collection->first(
             static fn (VariableInterface $variable, int $_): bool =>
                 $variable instanceof ServerVariableInterface &&
                 $variable->getName() === $name
@@ -153,7 +153,7 @@ final class Environment implements EnvironmentInterface
     public function getServerVariables(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables
+        $variables = $this->collection
             ->filter(
                 static fn (
                     VariableInterface $variable,
@@ -174,7 +174,7 @@ final class Environment implements EnvironmentInterface
 
     public function hasEnvironmentVariable(string $name): bool
     {
-        return null !== $this->variables->first(
+        return null !== $this->collection->first(
             static fn (
                 VariableInterface $variable,
                 int $_
@@ -184,7 +184,7 @@ final class Environment implements EnvironmentInterface
 
     public function hasServerVariable(string $name): bool
     {
-        return null !== $this->variables->first(
+        return null !== $this->collection->first(
             static fn (
                 VariableInterface $variable,
                 int $_
@@ -219,7 +219,7 @@ final class Environment implements EnvironmentInterface
     public function toArray(): array
     {
         /** @var array<string,string> $variables */
-        $variables = $this->variables
+        $variables = $this->collection
             ->map(static fn (VariableInterface $variable, int $_): array => $variable->toArray())
             ->reduce(
                 static fn (?array $variables, array $variable, int $_): array => ($variables ?? []) + $variable,
@@ -263,8 +263,8 @@ final class Environment implements EnvironmentInterface
      */
     private function mutate(Closure $mutation, array $variables = []): void
     {
-        /** @var Collection<VariableInterface> $this->variables */
-        $this->variables = $this->variables
+        /** @var Collection<VariableInterface> $this->collection */
+        $this->collection = $this->collection
             ->filter($mutation)
             ->append($variables);
     }

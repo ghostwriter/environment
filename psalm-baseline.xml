@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.4.0@62db5d4f6a7ae0a20f7cc5a4952d730272fc0863">
+<files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
+  <file src="src/Contract/EnvironmentInterface.php">
+    <InvalidDocblock>
+      <code>interface EnvironmentInterface extends Countable, IteratorAggregate</code>
+    </InvalidDocblock>
+    <PossiblyUnusedMethod>
+      <code>getEnvironmentVariable</code>
+      <code>getEnvironmentVariables</code>
+      <code>getServerVariable</code>
+      <code>getServerVariables</code>
+      <code>setEnvironmentVariable</code>
+      <code>setServerVariable</code>
+      <code>toArray</code>
+      <code>unsetEnvironmentVariable</code>
+      <code>unsetServerVariable</code>
+    </PossiblyUnusedMethod>
+  </file>
   <file src="src/Environment.php">
-    <MixedArgumentTypeCoercion occurrences="5">
+    <MixedArgumentTypeCoercion>
       <code>map</code>
       <code>map</code>
       <code>reduce</code>
       <code>reduce</code>
       <code>reduce</code>
     </MixedArgumentTypeCoercion>
+    <UnusedClass>
+      <code>Environment</code>
+    </UnusedClass>
+  </file>
+  <file src="src/Exception/SetFailedException.php">
+    <UnusedClass>
+      <code>SetFailedException</code>
+    </UnusedClass>
+  </file>
+  <file src="src/Exception/UnsetFailedException.php">
+    <UnusedClass>
+      <code>UnsetFailedException</code>
+    </UnusedClass>
   </file>
 </files>

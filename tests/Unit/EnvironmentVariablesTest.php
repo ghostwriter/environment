@@ -22,22 +22,31 @@ use Throwable;
 final class EnvironmentVariablesTest extends TestCase
 {
     /** @var non-empty-string */
-    private const NAME = 'VARIABLE_NAME';
+    private const NAME = 'BLM';
 
     /** @var non-empty-string */
-    private const VALUE = 'VARIABLE_VALUE';
+    private const VALUE = '#BlackLivesMatter';
 
-    /** @var array<non-empty-string,non-empty-string> */
-    private array $backupEnvironmentVariables = [];
+    /** @var non-empty-array<non-empty-string,non-empty-string> */
+    private array $backupENV;
+
+    /** @var non-empty-array<non-empty-string,non-empty-string> */
+    private array $backupEnvironmentVariables;
+
+    /** @var non-empty-array<non-empty-string,non-empty-string> */
+    private array $backupSERVER;
 
     private EnvironmentVariables $environmentVariables;
 
     protected function setUp(): void
     {
-        /** @var array<non-empty-string,non-empty-string> $environment */
-        $environment = ($_ENV === [] && function_exists('getenv')) ? getenv() : $_ENV;
+        /** @var non-empty-array<non-empty-string,non-empty-string> $this->backupSERVER */
+        $this->backupSERVER = $_SERVER;
 
-        if ($environment === []) {
+        /** @var non-empty-array<non-empty-string,non-empty-string> $this->backupENV */
+        $this->backupENV = ($_ENV === [] && function_exists('getenv')) ? getenv() : $_ENV;
+
+        if ($this->backupENV === []) {
             $variablesOrder = ini_get('variables_order');
             if ($variablesOrder === false || ! str_contains($variablesOrder, 'E')) {
                 self::markTestSkipped(
@@ -48,9 +57,9 @@ final class EnvironmentVariablesTest extends TestCase
             }
         }
 
-        /** @var array<non-empty-string,non-empty-string> $this->backupEnvironmentVariables */
+        /** @var non-empty-array<non-empty-string,non-empty-string> $this->backupEnvironmentVariables */
         $this->backupEnvironmentVariables = array_filter(
-            $_SERVER + $environment,
+            $this->backupSERVER + $this->backupENV,
             static fn (mixed $name, mixed $value): bool => is_string($name) && is_string($value),
             ARRAY_FILTER_USE_BOTH
         );
@@ -60,7 +69,9 @@ final class EnvironmentVariablesTest extends TestCase
 
     protected function tearDown(): void
     {
-        $_SERVER = $_ENV = $this->backupEnvironmentVariables;
+        $_SERVER = $this->backupSERVER;
+
+        $_ENV = $this->backupENV;
 
         unset($this->environmentVariables);
     }
@@ -85,7 +96,16 @@ final class EnvironmentVariablesTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(EnvironmentVariablesInterface::class, new EnvironmentVariables());
+        /** @var non-empty-array<non-empty-string,non-empty-string> $serverVariables */
+        $serverVariables = [];
+
+        $environmentVariables = new EnvironmentVariables($serverVariables, $this->backupEnvironmentVariables);
+        self::assertInstanceOf(EnvironmentVariablesInterface::class, $environmentVariables);
+        self::assertSame($this->backupEnvironmentVariables, $environmentVariables->toArray());
+
+        $environmentVariables = new EnvironmentVariables($this->backupSERVER, $this->backupENV);
+        self::assertInstanceOf(EnvironmentVariablesInterface::class, $environmentVariables);
+        self::assertSame($this->backupEnvironmentVariables, $environmentVariables->toArray());
     }
 
     public function testConstructThrowsRuntimeException(): void
@@ -93,12 +113,15 @@ final class EnvironmentVariablesTest extends TestCase
         $this->expectException(EnvironmentException::class);
         $this->expectException(RuntimeException::class);
 
+        /** @var non-empty-array<non-empty-string,non-empty-string> $serverVariables */
+        $serverVariables = [];
+
         /** @var non-empty-array<non-empty-string,non-empty-string> $environmentVariables */
         $environmentVariables = [];
 
         self::assertInstanceOf(
             EnvironmentVariablesInterface::class,
-            new EnvironmentVariables(null, $environmentVariables)
+            new EnvironmentVariables($serverVariables, $environmentVariables)
         );
     }
 

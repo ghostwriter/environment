@@ -9,28 +9,26 @@ use Ghostwriter\Environment\Exception\EnvironmentException;
 use Ghostwriter\Environment\Exception\InvalidNameException;
 use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
-use RuntimeException;
+use Ghostwriter\Environment\Tests\Unit\EnvironmentVariablesTest;
 
 /**
  * Maps environment variables.
  *
- * @see \Ghostwriter\Environment\Tests\Unit\EnvironmentTest
+ * @see EnvironmentVariablesTest
  */
 final class EnvironmentVariables implements EnvironmentVariablesInterface
 {
-    /** @var non-empty-array<non-empty-string,non-empty-string> $variables */
+    /** @var non-empty-array<non-empty-string,non-empty-string> */
     private array $variables;
 
     /**
      * Environment Variables provided to the script via the environment `$_ENV` and `$_SERVER`.
      *
-     * @param non-empty-array<non-empty-string,non-empty-string>|null $serverVariables `$_SERVER` variables
-     * @param non-empty-array<non-empty-string,non-empty-string>|null $environmentVariables `$_ENV` variables
+     * @param null|non-empty-array<non-empty-string,non-empty-string> $serverVariables      `$_SERVER` variables
+     * @param null|non-empty-array<non-empty-string,non-empty-string> $environmentVariables `$_ENV` variables
      */
-    public function __construct(
-            array|null $serverVariables = null,
-            array|null $environmentVariables = null
-    ) {
+    public function __construct(array|null $serverVariables = null, array|null $environmentVariables = null)
+    {
         $environmentVariables ??= ($_ENV === [] && function_exists('getenv')) ? getenv() : $_ENV;
 
         if ($environmentVariables === []) {

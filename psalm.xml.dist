@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="1"
-    findUnusedPsalmSuppress="true"
-    findUnusedBaselineEntry="true"
-    findUnusedCode="true"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    errorBaseline="psalm-baseline.xml"
-    cacheDirectory=".cache/psalm"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        cacheDirectory=".cache/psalm"
+        errorBaseline="psalm-baseline.xml"
+        errorLevel="1"
+        findUnusedBaselineEntry="true"
+        findUnusedCode="true"
+        findUnusedPsalmSuppress="true"
 >
     <projectFiles>
         <directory name="src"/>
+        <directory name="tests"/>
         <ignoreFiles>
             <directory name=".github"/>
-            <directory name="tests"/>
             <directory name="vendor"/>
             <file name="ecs.php"/>
             <file name="rector.php"/>

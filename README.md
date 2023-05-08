@@ -2,6 +2,7 @@
 
 [![Compliance](https://github.com/ghostwriter/environment/actions/workflows/compliance.yml/badge.svg)](https://github.com/ghostwriter/environment/actions/workflows/compliance.yml)
 [![Supported PHP Version](https://badgen.net/packagist/php/ghostwriter/environment?color=8892bf)](https://www.php.net/supported-versions)
+[![Code Coverage](https://codecov.io/gh/ghostwriter/environment/branch/main/graph/badge.svg)](https://codecov.io/gh/ghostwriter/environment)
 [![Type Coverage](https://shepherd.dev/github/ghostwriter/environment/coverage.svg)](https://shepherd.dev/github/ghostwriter/environment)
 [![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/environment)](https://packagist.org/packages/ghostwriter/environment)
 [![Downloads](https://badgen.net/packagist/dt/ghostwriter/environment?color=blue)](https://packagist.org/packages/ghostwriter/environment)
@@ -19,29 +20,27 @@ composer require ghostwriter/environment
 ## Usage
 
 ```php
-$environment = new \Ghostwriter\Environment\Environment();
+$environment = new \Ghostwriter\Environment\EnvironmentVariables();
 
 $environment->count(); // int
 $environment->toArray(); // array<string,string>
 $environment->getIterator(); // Traversable<int,VariableInterface>
-$environment->getEnvironmentVariables(); // array<string,string>
-$environment->getServerVariables(); // array<string,string>
 
-$environment->hasEnvironmentVariable('APP_ENV'); // false
-$environment->getEnvironmentVariable('APP_ENV', 'dev'); // dev
-$environment->getEnvironmentVariable('APP_ENV'); // throws NotFoundException
-$environment->setEnvironmentVariable('APP_ENV', 'production');
-$environment->hasEnvironmentVariable('APP_ENV'); // true
-$environment->getEnvironmentVariable('APP_ENV'); // production
-$environment->unsetEnvironmentVariable('APP_ENV');
+$environment->has('APP_ENV'); // false
+$environment->get('APP_ENV', 'dev'); // dev
+$environment->get('APP_ENV'); // throws NotFoundException
+$environment->set('APP_ENV', 'production');
+$environment->has('APP_ENV'); // true
+$environment->get('APP_ENV'); // production
+$environment->unset('APP_ENV');
 
-$environment->setServerVariable('APP_KEY', 'secrete');
-$environment->hasServerVariable('APP_KEY'); // true
-$environment->getServerVariable('APP_KEY'); // secrete
-$environment->unsetServerVariable('APP_KEY');
-$environment->hasServerVariable('APP_KEY'); // false
-$environment->getServerVariable('APP_KEY', 'fallback-value'); // fallback-value
-$environment->getServerVariable('APP_KEY'); // throws NotFoundException
+$environment->set('APP_KEY', 'secrete');
+$environment->has('APP_KEY'); // true
+$environment->get('APP_KEY'); // secrete
+$environment->unset('APP_KEY');
+$environment->has('APP_KEY'); // false
+$environment->get('APP_KEY', 'fallback-value'); // fallback-value
+$environment->get('APP_KEY'); // throws NotFoundException
 ```
 
 ## Testing

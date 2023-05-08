@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 namespace Ghostwriter\Environment\Tests\Unit;
 
-use Ghostwriter\Environment\Contract\EnvironmentInterface;
-use Ghostwriter\Environment\Environment;
+use Generator;
+use Ghostwriter\Environment\EnvironmentVariables;
+use Ghostwriter\Environment\EnvironmentVariablesInterface;
+use Ghostwriter\Environment\Exception\EnvironmentException;
+use Ghostwriter\Environment\Exception\InvalidNameException;
+use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
 use IteratorAggregate;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
 
-/**
- * @coversDefaultClass \Ghostwriter\Environment\Environment
- *
- * @internal
- *
- * @small
- *
- * @psalm-suppress MissingConstructor
- */
-final class EnvironmentTest extends AbstractTestCase
+#[CoversClass(EnvironmentVariables::class)]
+final class EnvironmentTest extends TestCase
 {
     /** @var string */
     private const NAME = 'VARIABLE_NAME';
@@ -26,449 +27,228 @@ final class EnvironmentTest extends AbstractTestCase
     /** @var string */
     private const VALUE = 'VARIABLE_VALUE';
 
-    private EnvironmentInterface $environment;
+    /**
+     * @var array<string,string>
+     */
+    protected array $backupEnvironmentVariables = [];
+
+    private EnvironmentVariables $environment;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        /** @var array<string,string> $environment */
+        $environment = ($_ENV === [] && function_exists('getenv')) ? getenv() : $_ENV;
 
-        $this->environment = new Environment();
+        if ($environment === []) {
+            $variablesOrder = ini_get('variables_order');
+            if ($variablesOrder === false || ! str_contains($variablesOrder, 'E')) {
+                self::markTestSkipped(
+                    'Cannot get a list of the current environment variables. '
+                    . 'Make sure the `variables_order` variable in php.ini '
+                    . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'
+                );
+            }
+        }
+
+        /** @var array<string,string> $this->backupEnvironmentVariables */
+        $this->backupEnvironmentVariables = array_filter(
+            $_SERVER + $environment,
+            static fn (mixed $name, mixed  $value): bool => is_string($name) && is_string($value),
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        $this->environment = new EnvironmentVariables();
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
+        $_SERVER = $_ENV = $this->backupEnvironmentVariables;
+
         unset($this->environment);
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
-     * @covers \Ghostwriter\Environment\Environment::getServerVariables
+     * @return Generator<string,array<array-key,non-empty-string|string>>
      */
+    public static function environmentVariablesProvider(): Generator
+    {
+        yield from [
+            'default' => ['name', 'value'],
+            'empty-name' => ['', 'value', InvalidNameException::class],
+            'empty-value' => ['name', ''],
+            'untrimmed-name' => [' name ', 'value', InvalidNameException::class],
+            'untrimmed-value' => ['name', ' value ', InvalidValueException::class],
+            'name-contains-equal-sign' => ['na=me', 'value', InvalidNameException::class],
+            'value-contains-equal-sign' => ['name', 'val=ue'],
+            'name-contains-NULL-byte' => ["na\0me", 'value', InvalidNameException::class],
+            'value-contains-NULL-byte' => ['name', "val\0ue", InvalidValueException::class],
+        ];
+    }
+
     public function testConstruct(): void
     {
-        self::assertSame($this->backupEnvironmentVariables, $this->environment->getEnvironmentVariables());
-        self::assertSame($this->backupServerVariables, $this->environment->getServerVariables());
+        self::assertInstanceOf(EnvironmentVariablesInterface::class, new EnvironmentVariables());
+    }
+    public function testConstructThrowsRuntimeException(): void
+    {
+        $this->expectException(EnvironmentException::class);
+        $this->expectException(RuntimeException::class);
+
+        /** @var non-empty-array<non-empty-string,non-empty-string> $environmentVariables */
+        $environmentVariables == [];
+
+        self::assertInstanceOf(
+            EnvironmentVariablesInterface::class,
+            new EnvironmentVariables(null, $environmentVariables)
+        );
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     */
     public function testCount(): void
     {
-        self::assertCount($this->environment->count(), $this->environment);
+        self::assertNotEmpty($this->environment);
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     */
     public function testGetEnvironmentVariable(): void
     {
         $count = $this->environment->count();
-
-        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
-        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
+        self::assertFalse($this->environment->has('GET_FOO'));
+        $this->environment->set('GET_FOO', 'BAR');
         self::assertCount($count + 1, $this->environment);
-        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
-        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
-        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
+        self::assertTrue($this->environment->has('GET_FOO'));
+        self::assertSame('BAR', $this->environment->get('GET_FOO'));
+        self::assertFalse($this->environment->has('FOOBAR'));
+        self::assertSame('BAZ', $this->environment->get('FOOBAR', 'BAZ'));
         self::assertTrue(true);
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     */
-    public function testGetEnvironmentVariables(): void
-    {
-        $count = $this->environment->count();
-        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
-        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
-        self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
-        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
-        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
-        self::assertTrue(true);
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getIterator
-     */
     public function testGetIterator(): void
     {
         self::assertInstanceOf(IteratorAggregate::class, $this->environment);
         self::assertCount(iterator_count($this->environment->getIterator()), $this->environment);
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     */
     public function testGetNotFoundException(): void
     {
         $this->expectException(NotFoundException::class);
-        $this->environment->getEnvironmentVariable('NOT_FOUND');
+        $this->environment->get('NOT_FOUND');
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariables
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::getServerVariables
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     */
     public function testGetServerVariable(): void
     {
         $count = $this->environment->count();
-        $environmentVariables = $this->environment->getEnvironmentVariables();
-        $serverVariables = $this->environment->getServerVariables();
+        $environmentVariables = $this->environment->toArray();
 
-        self::assertFalse($this->environment->hasServerVariable('GetServerVariable'));
+        self::assertFalse($this->environment->has('GetServerVariable'));
 
-        $this->environment->setServerVariable('GetServerVariable', 'ServerVariable');
+        $this->environment->set('GetServerVariable', 'ServerVariable');
 
         self::assertCount($count+1, $this->environment);
 
-        self::assertTrue($this->environment->hasServerVariable('GetServerVariable'));
+        self::assertTrue($this->environment->has('GetServerVariable'));
+        self::assertSame('ServerVariable', $this->environment->get('GetServerVariable'));
 
-        self::assertNotSame($serverVariables, $this->environment->getServerVariables());
+        $this->environment->unset('GetServerVariable');
 
-        self::assertSame('ServerVariable', $this->environment->getServerVariable('GetServerVariable'));
-
-        $this->environment->unsetServerVariable('GetServerVariable');
-
-        self::assertFalse($this->environment->hasServerVariable('GetServerVariable'));
-        self::assertSame('NULL', $this->environment->getServerVariable('GetServerVariable', 'NULL'));
+        self::assertFalse($this->environment->has('GetServerVariable'));
+        self::assertSame('NULL', $this->environment->get('GetServerVariable', 'NULL'));
 
         self::assertCount($count, $this->environment);
-        self::assertSame($environmentVariables, $this->environment->getEnvironmentVariables());
-        self::assertSame($serverVariables, $this->environment->getServerVariables());
+        self::assertSame($environmentVariables, $this->environment->toArray());
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     */
-    public function testGetServerVariables(): void
-    {
-        $count = $this->environment->count();
-        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
-        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
-        self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
-        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
-        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
-        self::assertTrue(true);
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     */
     public function testGetVariable(): void
     {
         $count = $this->environment->count();
-        self::assertFalse($this->environment->hasEnvironmentVariable('GET_FOO'));
-        $this->environment->setEnvironmentVariable('GET_FOO', 'BAR');
+        self::assertFalse($this->environment->has('GET_FOO'));
+        $this->environment->set('GET_FOO', 'BAR');
         self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasEnvironmentVariable('GET_FOO'));
-        self::assertSame('BAR', $this->environment->getEnvironmentVariable('GET_FOO'));
-        self::assertFalse($this->environment->hasEnvironmentVariable('FOOBAR'));
-        self::assertSame('BAZ', $this->environment->getEnvironmentVariable('FOOBAR', 'BAZ'));
+        self::assertTrue($this->environment->has('GET_FOO'));
+        self::assertSame('BAR', $this->environment->get('GET_FOO'));
+        self::assertFalse($this->environment->has('FOOBAR'));
+        self::assertSame('BAZ', $this->environment->get('FOOBAR', 'BAZ'));
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-    ┴
-     */
     public function testHasEnvironmentVariable(): void
     {
-        self::assertFalse($this->environment->hasEnvironmentVariable('HAS_FOO'));
-        $this->environment->setEnvironmentVariable('HAS_FOO', 'BAR');
-        self::assertTrue($this->environment->hasEnvironmentVariable('HAS_FOO'));
+        self::assertFalse($this->environment->has('HAS_FOO'));
+        $this->environment->set('HAS_FOO', 'BAR');
+        self::assertTrue($this->environment->has('HAS_FOO'));
     }
 
     /**
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
+     * @param non-empty-string             $name
+     * @param non-empty-string             $value
+     * @param null|class-string<Throwable> $expectedException
      */
-    public function testHasServerVariable(): void
+    #[DataProvider('environmentVariablesProvider')]
+    public function testHasGetSetUnset(string $name, string $value, string|null $expectedException = null): void
     {
-        self::assertFalse($this->environment->hasServerVariable('HAS_FOO'));
-        $this->environment->setServerVariable('HAS_FOO', 'BAR');
-        self::assertTrue($this->environment->hasServerVariable('HAS_FOO'));
+        self::assertFalse($this->environment->has($name));
+
+        if ($expectedException !== null) {
+            $this->expectException($expectedException);
+        }
+
+        $this->environment->set($name, $value);
+
+        self::assertTrue($this->environment->has($name));
+        self::assertSame($value, $this->environment->get($name));
+
+        $this->environment->unset($name);
+
+        self::assertFalse($this->environment->has($name));
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     */
-    public function testServerVariable(): void
-    {
-        $count = $this->environment->count();
-        self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasServerVariable(self::NAME));
-        $this->environment->setServerVariable(self::NAME, self::VALUE);
-        self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasServerVariable(self::NAME));
-        self::assertSame(self::VALUE, $this->environment->getServerVariable(self::NAME));
-        $this->environment->unsetServerVariable(self::NAME);
-        self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasServerVariable(self::NAME));
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     */
     public function testSetEnvironmentVariable(): void
     {
         $count = $this->environment->count();
-        self::assertFalse($this->environment->hasEnvironmentVariable('SET_FOO'));
-        $this->environment->setEnvironmentVariable('SET_FOO', 'SET_FOO_BAR');
-        self::assertTrue($this->environment->hasEnvironmentVariable('SET_FOO'));
-        self::assertSame('SET_FOO_BAR', $this->environment->getEnvironmentVariable('SET_FOO'));
+        self::assertFalse($this->environment->has('SET_FOO'));
+        $this->environment->set('SET_FOO', 'SET_FOO_BAR');
+        self::assertTrue($this->environment->has('SET_FOO'));
+        self::assertSame('SET_FOO_BAR', $this->environment->get('SET_FOO'));
         self::assertCount($count+1, $this->environment);
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     */
-    public function testSetServerVariable(): void
-    {
-        $count = $this->environment->count();
-        self::assertFalse($this->environment->hasServerVariable('SET_FOO'));
-        $this->environment->setServerVariable('SET_FOO', 'SET_FOO_BAR');
-        self::assertTrue($this->environment->hasServerVariable('SET_FOO'));
-        self::assertSame('SET_FOO_BAR', $this->environment->getServerVariable('SET_FOO'));
-        self::assertCount($count+1, $this->environment);
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::toArray
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::toArray
-     */
     public function testToArray(): void
     {
-        self::assertSame(array_filter(
-            array_merge($this->backupEnvironmentVariables, $this->backupServerVariables),
-            static fn ($value, $name): bool => is_string($name) && is_string($value),
-            ARRAY_FILTER_USE_BOTH
-        ), $this->environment->toArray());
+        self::assertSame($this->backupEnvironmentVariables, $this->environment->toArray());
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
-     */
     public function testUnsetEnvironmentVariable(): void
     {
         $count = $this->environment->count();
         self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasEnvironmentVariable(self::NAME));
-        $this->environment->setEnvironmentVariable(self::NAME, self::VALUE);
+        self::assertFalse($this->environment->has(self::NAME));
+        $this->environment->set(self::NAME, self::VALUE);
         self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasEnvironmentVariable(self::NAME));
-        self::assertSame(self::VALUE, $this->environment->getEnvironmentVariable(self::NAME));
-        $this->environment->unsetEnvironmentVariable(self::NAME);
+        self::assertTrue($this->environment->has(self::NAME));
+        self::assertSame(self::VALUE, $this->environment->get(self::NAME));
+        $this->environment->unset(self::NAME);
         self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasEnvironmentVariable(self::NAME));
+        self::assertFalse($this->environment->has(self::NAME));
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::hasEnvironmentVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetEnvironmentVariable
-     */
-    public function testUnsetEnvironmentVariableNotFoundException(): void
+    public function testUnsetEnvironmentVariableThrowsNotFoundException(): void
     {
         $count = $this->environment->count();
         self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasEnvironmentVariable('NOT_FOUND'));
+        self::assertFalse($this->environment->has('NOT_FOUND'));
         $this->expectException(NotFoundException::class);
-        $this->environment->unsetEnvironmentVariable('NOT_FOUND');
+        $this->environment->unset('NOT_FOUND');
         self::assertCount($count, $this->environment);
     }
 
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getValue
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::getServerVariable
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::mutate
-     * @covers \Ghostwriter\Environment\Environment::setServerVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     */
     public function testUnsetServerVariable(): void
     {
         $count = $this->environment->count();
         self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasServerVariable(self::NAME));
-        $this->environment->setServerVariable(self::NAME, self::VALUE);
+        self::assertFalse($this->environment->has(self::NAME));
+        $this->environment->set(self::NAME, self::VALUE);
         self::assertCount($count+1, $this->environment);
-        self::assertTrue($this->environment->hasServerVariable(self::NAME));
-        self::assertSame(self::VALUE, $this->environment->getServerVariable(self::NAME));
-        $this->environment->unsetServerVariable(self::NAME);
+        self::assertTrue($this->environment->has(self::NAME));
+        self::assertSame(self::VALUE, $this->environment->get(self::NAME));
+        $this->environment->unset(self::NAME);
         self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasServerVariable(self::NAME));
-    }
-
-    /**
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::__construct
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidName
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::assertValidValue
-     * @covers \Ghostwriter\Environment\EnvironmentVariable::getName
-     * @covers \Ghostwriter\Environment\Environment::__construct
-     * @covers \Ghostwriter\Environment\Environment::count
-     * @covers \Ghostwriter\Environment\Environment::hasServerVariable
-     * @covers \Ghostwriter\Environment\Environment::unsetServerVariable
-     */
-    public function testUnsetServerVariableNotFoundException(): void
-    {
-        $count = $this->environment->count();
-        self::assertCount($count, $this->environment);
-        self::assertFalse($this->environment->hasServerVariable('NOT_FOUND'));
-        $this->expectException(NotFoundException::class);
-        $this->environment->unsetServerVariable('NOT_FOUND');
-        self::assertCount($count, $this->environment);
+        self::assertFalse($this->environment->has(self::NAME));
     }
 }

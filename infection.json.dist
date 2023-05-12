@@ -14,9 +14,12 @@
     },
     "timeout": 10,
     "logs": {
+        "stryker": {
+            "report": "/.*?/"
+        },
         "text": "php:\/\/stderr",
         "github": true
     },
-    "minMsi": 10,
-    "minCoveredMsi": 83
+    "minMsi": 100,
+    "minCoveredMsi": 100
 }

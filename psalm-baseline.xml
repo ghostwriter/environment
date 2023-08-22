@@ -1,8 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.11.0@c9b192ab8400fdaf04b2b13d110575adc879aa90">
-  <file src="tests/Unit/EnvironmentVariablesTest.php">
-    <PossiblyUnusedMethod>
-      <code>environmentVariablesProvider</code>
-    </PossiblyUnusedMethod>
-  </file>
-</files>
+<files psalm-version="5.15.0@5c774aca4746caf3d239d9c8cadb9f882ca29352"/>

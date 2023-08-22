@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Ghostwriter\Environment\Exception;
 
+use Ghostwriter\Environment\Exception;
 use RuntimeException;
 
-final class NotFoundException extends RuntimeException implements EnvironmentExceptionInterface
+final class NotFoundException extends RuntimeException implements Exception
 {
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.17.0@c620f6e80d0abfca532b00bda366062aaedf6e5d">
-  <file src="tests/Unit/EnvironmentVariablesTest.php">
+  <file src="tests/Unit/EnvironmentTest.php">
     <PropertyNotSetInConstructor>
       <code>$backupENV</code>
       <code>$backupEnvironment</code>
@@ -8,7 +8,7 @@
       <code>$environment</code>
     </PropertyNotSetInConstructor>
     <UnusedClass>
-      <code>EnvironmentVariablesTest</code>
+      <code>EnvironmentTest</code>
     </UnusedClass>
   </file>
 </files>

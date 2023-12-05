@@ -32,11 +32,11 @@
         }
     ],
     "require": {
-        "php": ">=8.1"
+        "php": ">=8.2"
     },
     "require-dev": {
         "ghostwriter/coding-standard": "dev-main",
-        "ghostwriter/psalm-plugin": "^0.1 || ^0.2 || ^1.0"
+        "ghostwriter/psalm-plugin": "^0.2 || ^0.3 || ^1.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -51,12 +51,10 @@
         }
     },
     "config": {
-        "classmap-authoritative": true,
         "discard-changes": true,
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "prepend-autoloader": true,
-        "process-timeout": 5000,
         "sort-packages": true
     },
     "scripts": {

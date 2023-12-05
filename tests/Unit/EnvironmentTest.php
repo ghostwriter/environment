@@ -6,11 +6,11 @@ namespace Ghostwriter\Environment\Tests\Unit;
 
 use Generator;
 use Ghostwriter\Environment\Environment;
-use Ghostwriter\Environment\Variables;
 use Ghostwriter\Environment\Exception\EnvironmentException;
 use Ghostwriter\Environment\Exception\InvalidNameException;
 use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
+use Ghostwriter\Environment\Interface\EnvironmentInterface;
 use IteratorAggregate;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -48,11 +48,11 @@ final class EnvironmentTest extends TestCase
 
         if ($this->backupENV === []) {
             $variablesOrder = ini_get('variables_order');
-            if ($variablesOrder === false || ! str_contains($variablesOrder, 'E')) {
+            if ($variablesOrder === false || !str_contains($variablesOrder, 'E')) {
                 self::markTestSkipped(
                     'Cannot get a list of the current environment variables. '
-                    . 'Make sure the `variables_order` variable in php.ini '
-                    . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'
+                        . 'Make sure the `variables_order` variable in php.ini '
+                        . 'contains the letter "E". https://www.php.net/manual/en/ini.core.php#ini.variables-order'
                 );
             }
         }
@@ -100,11 +100,11 @@ final class EnvironmentTest extends TestCase
         $serverVariables = [];
 
         $environment = new Environment($serverVariables, $this->backupEnvironment);
-        self::assertInstanceOf(Variables::class, $environment);
+        self::assertInstanceOf(EnvironmentInterface::class, $environment);
         self::assertSame($this->backupEnvironment, $environment->toArray());
 
         $environment = new Environment($this->backupSERVER, $this->backupENV);
-        self::assertInstanceOf(Variables::class, $environment);
+        self::assertInstanceOf(EnvironmentInterface::class, $environment);
         self::assertSame($this->backupEnvironment, $environment->toArray());
     }
 
@@ -120,7 +120,7 @@ final class EnvironmentTest extends TestCase
         $environment = [];
 
         self::assertInstanceOf(
-            Variables::class,
+            EnvironmentInterface::class,
             new Environment($serverVariables, $environment)
         );
     }
@@ -164,7 +164,7 @@ final class EnvironmentTest extends TestCase
 
         $this->environment->set('GetServerVariable', 'ServerVariable');
 
-        self::assertCount($count+1, $this->environment);
+        self::assertCount($count + 1, $this->environment);
 
         self::assertTrue($this->environment->has('GetServerVariable'));
         self::assertSame('ServerVariable', $this->environment->get('GetServerVariable'));
@@ -183,7 +183,7 @@ final class EnvironmentTest extends TestCase
         $count = $this->environment->count();
         self::assertFalse($this->environment->has('GET_FOO'));
         $this->environment->set('GET_FOO', 'BAR');
-        self::assertCount($count+1, $this->environment);
+        self::assertCount($count + 1, $this->environment);
         self::assertTrue($this->environment->has('GET_FOO'));
         self::assertSame('BAR', $this->environment->get('GET_FOO'));
         self::assertFalse($this->environment->has('FOOBAR'));
@@ -228,7 +228,7 @@ final class EnvironmentTest extends TestCase
         $this->environment->set('SET_FOO', 'SET_FOO_BAR');
         self::assertTrue($this->environment->has('SET_FOO'));
         self::assertSame('SET_FOO_BAR', $this->environment->get('SET_FOO'));
-        self::assertCount($count+1, $this->environment);
+        self::assertCount($count + 1, $this->environment);
     }
 
     public function testToArray(): void
@@ -242,7 +242,7 @@ final class EnvironmentTest extends TestCase
         self::assertCount($count, $this->environment);
         self::assertFalse($this->environment->has(self::NAME));
         $this->environment->set(self::NAME, self::VALUE);
-        self::assertCount($count+1, $this->environment);
+        self::assertCount($count + 1, $this->environment);
         self::assertTrue($this->environment->has(self::NAME));
         self::assertSame(self::VALUE, $this->environment->get(self::NAME));
         $this->environment->unset(self::NAME);
@@ -266,7 +266,7 @@ final class EnvironmentTest extends TestCase
         self::assertCount($count, $this->environment);
         self::assertFalse($this->environment->has(self::NAME));
         $this->environment->set(self::NAME, self::VALUE);
-        self::assertCount($count+1, $this->environment);
+        self::assertCount($count + 1, $this->environment);
         self::assertTrue($this->environment->has(self::NAME));
         self::assertSame(self::VALUE, $this->environment->get(self::NAME));
         $this->environment->unset(self::NAME);

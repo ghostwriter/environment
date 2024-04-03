@@ -32,7 +32,8 @@
         }
     ],
     "require": {
-        "php": ">=8.2"
+        "php": "^8.3",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "ghostwriter/coding-standard": "dev-main",
@@ -42,17 +43,21 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Ghostwriter\\Environment\\": "src/"
+            "Ghostwriter\\Environment\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ghostwriter\\Environment\\Tests\\": "tests/"
+            "Ghostwriter\\EnvironmentTests\\": "tests"
         }
     },
     "config": {
+        "allow-plugins": {
+            "ghostwriter/coding-standard": true
+        },
         "discard-changes": true,
         "optimize-autoloader": true,
+        "platform-check": false,
         "preferred-install": "dist",
         "prepend-autoloader": true,
         "sort-packages": true

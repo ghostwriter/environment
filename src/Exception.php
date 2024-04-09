@@ -6,6 +6,4 @@ namespace Ghostwriter\Environment;
 
 use Throwable;
 
-interface Exception extends Throwable
-{
-}
+interface Exception extends Throwable {}

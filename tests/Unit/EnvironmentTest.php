@@ -18,6 +18,16 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
 
+use function array_filter;
+use function function_exists;
+use function getenv;
+use function ini_get;
+use function is_string;
+use function iterator_count;
+use function str_contains;
+
+use const ARRAY_FILTER_USE_BOTH;
+
 #[CoversClass(Environment::class)]
 final class EnvironmentTest extends TestCase
 {
@@ -48,7 +58,7 @@ final class EnvironmentTest extends TestCase
 
         if ($this->backupENV === []) {
             $variablesOrder = ini_get('variables_order');
-            if ($variablesOrder === false || !str_contains($variablesOrder, 'E')) {
+            if ($variablesOrder === false || ! str_contains($variablesOrder, 'E')) {
                 self::markTestSkipped(
                     'Cannot get a list of the current environment variables. '
                         . 'Make sure the `variables_order` variable in php.ini '
@@ -119,10 +129,7 @@ final class EnvironmentTest extends TestCase
         /** @var non-empty-array<non-empty-string,non-empty-string> $environment */
         $environment = [];
 
-        self::assertInstanceOf(
-            EnvironmentInterface::class,
-            new Environment($serverVariables, $environment)
-        );
+        self::assertInstanceOf(EnvironmentInterface::class, new Environment($serverVariables, $environment));
     }
 
     public function testCount(): void
@@ -203,7 +210,7 @@ final class EnvironmentTest extends TestCase
      * @param null|class-string<Throwable> $expectedException
      */
     #[DataProvider('environmentProvider')]
-    public function testHasGetSetUnset(string $name, string $value, string|null $expectedException = null): void
+    public function testHasGetSetUnset(string $name, string $value, null|string $expectedException = null): void
     {
         self::assertFalse($this->environment->has($name));
 

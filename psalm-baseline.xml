@@ -3,7 +3,7 @@
   <file src="src/Environment.php">
     <MissingOverrideAttribute>
       <code><![CDATA[public function count(): int]]></code>
-      <code><![CDATA[public function get(string $name, string|null $default = null): string]]></code>
+      <code><![CDATA[public function get(string $name, null|string $default = null): string]]></code>
       <code><![CDATA[public function getIterator(): Generator]]></code>
       <code><![CDATA[public function has(string $name): bool]]></code>
       <code><![CDATA[public function set(string $name, string $value): void]]></code>

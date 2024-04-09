@@ -34,7 +34,7 @@ interface EnvironmentInterface extends Countable, IteratorAggregate
      * @return non-empty-string
      *
      */
-    public function get(string $name, string|null $default = null): string;
+    public function get(string $name, null|string $default = null): string;
 
     /**
      * Get all variables.

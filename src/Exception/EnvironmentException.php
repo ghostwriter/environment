@@ -7,6 +7,4 @@ namespace Ghostwriter\Environment\Exception;
 use Ghostwriter\Environment\Exception;
 use RuntimeException;
 
-final class EnvironmentException extends RuntimeException implements Exception
-{
-}
+final class EnvironmentException extends RuntimeException implements Exception {}

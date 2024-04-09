@@ -12,6 +12,20 @@ use Ghostwriter\Environment\Exception\NotFoundException;
 use Ghostwriter\Environment\Tests\Unit\EnvironmentTest;
 use Ghostwriter\Environment\Interface\EnvironmentInterface;
 
+use function array_filter;
+use function array_key_exists;
+use function array_merge;
+use function function_exists;
+use function getenv;
+use function ini_get;
+use function is_string;
+use function iterator_count;
+use function sprintf;
+use function str_contains;
+use function trim;
+
+use const ARRAY_FILTER_USE_BOTH;
+
 /**
  * Maps environment variables.
  *
@@ -28,7 +42,7 @@ final class Environment implements EnvironmentInterface
      * @param null|non-empty-array<non-empty-string,non-empty-string> $serverVariables      `$_SERVER` variables
      * @param null|non-empty-array<non-empty-string,non-empty-string> $environmentVariables `$_ENV` variables
      */
-    public function __construct(array|null $serverVariables = null, array|null $environmentVariables = null)
+    public function __construct(null|array $serverVariables = null, null|array $environmentVariables = null)
     {
         $environmentVariables ??= ($_ENV === [] && function_exists('getenv')) ? getenv() : $_ENV;
 
@@ -61,7 +75,7 @@ final class Environment implements EnvironmentInterface
         return iterator_count($this);
     }
 
-    public function get(string $name, string|null $default = null): string
+    public function get(string $name, null|string $default = null): string
     {
         $variable = $this->variables[$name] ?? $default;
 

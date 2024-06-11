@@ -9,8 +9,10 @@ use Ghostwriter\Environment\Exception\EnvironmentException;
 use Ghostwriter\Environment\Exception\InvalidNameException;
 use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
-use Ghostwriter\Environment\Tests\Unit\EnvironmentTest;
 use Ghostwriter\Environment\Interface\EnvironmentInterface;
+use Override;
+
+use const ARRAY_FILTER_USE_BOTH;
 
 use function array_filter;
 use function array_key_exists;
@@ -24,12 +26,10 @@ use function sprintf;
 use function str_contains;
 use function trim;
 
-use const ARRAY_FILTER_USE_BOTH;
-
 /**
  * Maps environment variables.
  *
- * @see EnvironmentTest
+ * @see \Tests\Unit\EnvironmentTest
  */
 final class Environment implements EnvironmentInterface
 {
@@ -41,6 +41,8 @@ final class Environment implements EnvironmentInterface
      *
      * @param null|non-empty-array<non-empty-string,non-empty-string> $serverVariables      `$_SERVER` variables
      * @param null|non-empty-array<non-empty-string,non-empty-string> $environmentVariables `$_ENV` variables
+     *
+     * @throws EnvironmentException if the environment variables cannot be retrieved
      */
     public function __construct(null|array $serverVariables = null, null|array $environmentVariables = null)
     {
@@ -70,11 +72,16 @@ final class Environment implements EnvironmentInterface
         $this->variables = $variables;
     }
 
+    #[Override]
     public function count(): int
     {
         return iterator_count($this);
     }
 
+    /**
+     * @throws NotFoundException if variable $name does not exist and $default is not a string
+     */
+    #[Override]
     public function get(string $name, null|string $default = null): string
     {
         $variable = $this->variables[$name] ?? $default;
@@ -86,16 +93,19 @@ final class Environment implements EnvironmentInterface
         return $variable;
     }
 
+    #[Override]
     public function getIterator(): Generator
     {
         yield from $this->variables;
     }
 
+    #[Override]
     public function has(string $name): bool
     {
         return array_key_exists($name, $this->variables);
     }
 
+    #[Override]
     public function set(string $name, string $value): void
     {
         self::validVariable($name, $value);
@@ -103,11 +113,13 @@ final class Environment implements EnvironmentInterface
         $_ENV[$name] = $_SERVER[$name] = $this->variables[$name] = $value;
     }
 
+    #[Override]
     public function toArray(): array
     {
         return $this->variables;
     }
 
+    #[Override]
     public function unset(string $name): void
     {
         if (! $this->has($name)) {
@@ -129,27 +141,33 @@ final class Environment implements EnvironmentInterface
         $trimmedName = trim($name);
 
         match (true) {
+            default => $name,
+
             $trimmedName === '' => throw new InvalidNameException('Variable $name MUST be a non-empty-string.'),
+
             $trimmedName !== $name => throw new InvalidNameException(
                 'Variable $name MUST not contain leading or trailing whitespace.'
             ),
+
             str_contains($name, '=') => throw new InvalidNameException(
                 'Variable $name MUST not contain "=" an equal sign.'
             ),
+
             str_contains($name, "\0") => throw new InvalidNameException(
                 'Variable $name MUST not contain "\0" a null byte character.'
             ),
-            default => $name
         };
 
         match (true) {
+            default => $value,
+
             trim($value) !== $value => throw new InvalidValueException(
                 'Variable $value MUST not contain leading or trailing whitespace.'
             ),
+
             str_contains($value, "\0") => throw new InvalidValueException(
                 'Variable $value MUST not contain "\0" a null byte character.'
-            ),
-            default => $value
+            )
         };
     }
 }

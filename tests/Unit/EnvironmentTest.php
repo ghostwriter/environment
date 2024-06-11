@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ghostwriter\Environment\Tests\Unit;
+namespace Tests\Unit;
 
 use Generator;
 use Ghostwriter\Environment\Environment;
@@ -12,11 +12,14 @@ use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
 use Ghostwriter\Environment\Interface\EnvironmentInterface;
 use IteratorAggregate;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Throwable;
+
+use const ARRAY_FILTER_USE_BOTH;
 
 use function array_filter;
 use function function_exists;
@@ -26,16 +29,14 @@ use function is_string;
 use function iterator_count;
 use function str_contains;
 
-use const ARRAY_FILTER_USE_BOTH;
-
 #[CoversClass(Environment::class)]
 final class EnvironmentTest extends TestCase
 {
     /** @var non-empty-string */
-    private const NAME = 'BLM';
+    private const string NAME = 'BLM';
 
     /** @var non-empty-string */
-    private const VALUE = '#BlackLivesMatter';
+    private const string VALUE = '#BlackLivesMatter';
 
     /** @var non-empty-array<non-empty-string,non-empty-string> */
     private array $backupENV;
@@ -48,6 +49,7 @@ final class EnvironmentTest extends TestCase
 
     private Environment $environment;
 
+    #[Override]
     protected function setUp(): void
     {
         /** @var non-empty-array<non-empty-string,non-empty-string> $this->backupSERVER */
@@ -77,6 +79,7 @@ final class EnvironmentTest extends TestCase
         $this->environment = new Environment();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $_SERVER = $this->backupSERVER;
@@ -84,24 +87,6 @@ final class EnvironmentTest extends TestCase
         $_ENV = $this->backupENV;
 
         unset($this->environment);
-    }
-
-    /**
-     * @return Generator<string,array<array-key,non-empty-string|string>>
-     */
-    public static function environmentProvider(): Generator
-    {
-        yield from [
-            'default' => ['name', 'value'],
-            'empty-name' => ['', 'value', InvalidNameException::class],
-            'empty-value' => ['name', ''],
-            'untrimmed-name' => [' name ', 'value', InvalidNameException::class],
-            'untrimmed-value' => ['name', ' value ', InvalidValueException::class],
-            'name-contains-equal-sign' => ['na=me', 'value', InvalidNameException::class],
-            'value-contains-equal-sign' => ['name', 'val=ue'],
-            'name-contains-NULL-byte' => ["na\0me", 'value', InvalidNameException::class],
-            'value-contains-NULL-byte' => ['name', "val\0ue", InvalidValueException::class],
-        ];
     }
 
     public function testConstruct(): void
@@ -279,5 +264,23 @@ final class EnvironmentTest extends TestCase
         $this->environment->unset(self::NAME);
         self::assertCount($count, $this->environment);
         self::assertFalse($this->environment->has(self::NAME));
+    }
+
+    /**
+     * @return Generator<string,array<array-key,non-empty-string|string>>
+     */
+    public static function environmentProvider(): Generator
+    {
+        yield from [
+            'default' => ['name', 'value'],
+            'empty-name' => ['', 'value', InvalidNameException::class],
+            'empty-value' => ['name', ''],
+            'untrimmed-name' => [' name ', 'value', InvalidNameException::class],
+            'untrimmed-value' => ['name', ' value ', InvalidValueException::class],
+            'name-contains-equal-sign' => ['na=me', 'value', InvalidNameException::class],
+            'value-contains-equal-sign' => ['name', 'val=ue'],
+            'name-contains-NULL-byte' => ["na\0me", 'value', InvalidNameException::class],
+            'value-contains-NULL-byte' => ['name', "val\0ue", InvalidValueException::class],
+        ];
     }
 }

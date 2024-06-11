@@ -7,4 +7,6 @@ namespace Ghostwriter\Environment\Exception;
 use Ghostwriter\Environment\Exception;
 use RuntimeException;
 
-final class NotFoundException extends RuntimeException implements Exception {}
+final class NotFoundException extends RuntimeException implements Exception
+{
+}

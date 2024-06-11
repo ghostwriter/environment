@@ -52,6 +52,8 @@ final class EnvironmentTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
+        parent::setUp();
+
         /** @var non-empty-array<non-empty-string,non-empty-string> $this->backupSERVER */
         $this->backupSERVER = $_SERVER;
 
@@ -87,6 +89,8 @@ final class EnvironmentTest extends TestCase
         $_ENV = $this->backupENV;
 
         unset($this->environment);
+
+        parent::tearDown();
     }
 
     public function testConstruct(): void

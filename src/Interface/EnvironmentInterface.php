@@ -10,6 +10,7 @@ use Ghostwriter\Environment\Exception\InvalidNameException;
 use Ghostwriter\Environment\Exception\InvalidValueException;
 use Ghostwriter\Environment\Exception\NotFoundException;
 use IteratorAggregate;
+use Override;
 
 /**
  * @extends IteratorAggregate<non-empty-string,non-empty-string>
@@ -21,6 +22,7 @@ interface EnvironmentInterface extends Countable, IteratorAggregate
      *
      * @return int<0,max>
      */
+    #[Override]
     public function count(): int;
 
     /**
@@ -41,6 +43,7 @@ interface EnvironmentInterface extends Countable, IteratorAggregate
      *
      * @return Generator<non-empty-string,non-empty-string>
      */
+    #[Override]
     public function getIterator(): Generator;
 
     /**

@@ -108,7 +108,7 @@ final class Environment implements EnvironmentInterface
     #[Override]
     public function set(string $name, string $value): void
     {
-        self::validVariable($name, $value);
+        $this->validVariable($name, $value);
 
         $_ENV[$name] = $_SERVER[$name] = $this->variables[$name] = $value;
     }
@@ -136,7 +136,7 @@ final class Environment implements EnvironmentInterface
      * @param non-empty-string $name
      * @param non-empty-string $value
      */
-    private static function validVariable(string $name, string $value): void
+    private function validVariable(string $name, string $value): void
     {
         $trimmedName = trim($name);
 

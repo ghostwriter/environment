@@ -42,12 +42,12 @@ final class EnvironmentTest extends TestCase
     private array $backupENV;
 
     /** @var non-empty-array<non-empty-string,non-empty-string> */
-    private array $backupEnvironment;
-
-    /** @var non-empty-array<non-empty-string,non-empty-string> */
     private array $backupSERVER;
 
     private Environment $environment;
+
+    /** @var non-empty-array<non-empty-string,non-empty-string> */
+    private array $backupEnvironment;
 
     #[Override]
     protected function setUp(): void

@@ -1,11 +1,8 @@
 # Environment
 
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/ghostwriter?label=Sponsor+@ghostwriter/environment&logo=GitHub+Sponsors)](https://github.com/sponsors/ghostwriter)
 [![Automation](https://github.com/ghostwriter/environment/actions/workflows/automation.yml/badge.svg)](https://github.com/ghostwriter/environment/actions/workflows/automation.yml)
 [![Supported PHP Version](https://badgen.net/packagist/php/ghostwriter/environment?color=8892bf)](https://www.php.net/supported-versions)
-[![Mutation Coverage](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fghostwriter%2Fenvironment%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/ghostwriter/environment/main)
-[![Code Coverage](https://codecov.io/gh/ghostwriter/environment/branch/main/graph/badge.svg)](https://codecov.io/gh/ghostwriter/environment)
-[![Type Coverage](https://shepherd.dev/github/ghostwriter/environment/coverage.svg)](https://shepherd.dev/github/ghostwriter/environment)
-[![Latest Version on Packagist](https://badgen.net/packagist/v/ghostwriter/environment)](https://packagist.org/packages/ghostwriter/environment)
 [![Downloads](https://badgen.net/packagist/dt/ghostwriter/environment?color=blue)](https://packagist.org/packages/ghostwriter/environment)
 
 Provides Environment Variables derived from `$_ENV` and `$_SERVER` super-globals
@@ -86,4 +83,4 @@ If you discover any security related issues, please email `nathanael.esayeas@pro
 
 ## License
 
-The BSD-3-Clause. Please see [License File](./LICENSE) for more information.
+The BSD-4-Clause. Please see [License File](./LICENSE) for more information.

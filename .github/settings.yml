@@ -3,7 +3,6 @@
   "description": "Provides Environment Variables derived from `$_ENV` and `$_SERVER` super-globals"
   "homepage": "https://github.com/ghostwriter/environment"
   "topics": "environment, environment-variables, ghostwriter, php, server-variables"
-  "private": false
   "has_issues": true
   "has_projects": false
   "has_wiki": false

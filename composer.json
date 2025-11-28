@@ -98,8 +98,8 @@
     },
     "extra": {
         "thanks": {
-            "url": "https://github.com/ghostwriter/environment",
-            "name": "ghostwriter/environment"
+            "name": "ghostwriter/environment",
+            "url": "https://github.com/ghostwriter/environment"
         }
     }
 }

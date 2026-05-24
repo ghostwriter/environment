@@ -35,12 +35,6 @@
 "repository":
   "name": "environment"
   "description": "Provides Environment Variables derived from `$_ENV` and `$_SERVER` super-globals"
-  "topics":
-    - "ghostwriter"
-    - "environment"
-    - "php"
-    - "environment-variables"
-    - "server-variables"
   "homepage": "https://github.com/ghostwriter/environment"
   "default_branch": "2.0.x"
   "allow_auto_merge": true

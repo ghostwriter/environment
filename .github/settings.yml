@@ -42,7 +42,7 @@
     - "environment-variables"
     - "server-variables"
   "homepage": "https://github.com/ghostwriter/environment"
-  "default_branch": "github-settings"
+  "default_branch": "2.0.x"
   "allow_auto_merge": true
   "allow_forking": true
   "allow_merge_commit": true
